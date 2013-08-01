@@ -1,8 +1,6 @@
 package com.me.snake.screens;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;

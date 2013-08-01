@@ -1,22 +1,13 @@
 package com.me.snake.screens;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
-import org.json.simple.parser.ParseException;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-
-import sun.io.CharToByteASCII;
-import sun.security.util.Length;
-
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -24,28 +15,21 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
 import com.me.snake.PickedUpPos;
+import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
 import com.me.snake.SnakePart;
-import com.sun.org.apache.bcel.internal.generic.GOTO;
 
 public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
+	private Actor actor;
 	private SpriteBatch batch;
-	private Texture eatTx, background, wallTx, borderTx,controlBut, fontTx, exitTx, pauseTx;
-	private Sprite snakeEat, bgSp,pauseSp, bigPause, mob, exitSp;
+	private Sprite snakeEat, bgSp,pauseSp, bigPause, mob, exitSp, controlSp;
 	public static float SQUARE_WIDTH, SQUARE_HEIGHT;
 	int pixCountWid = 20, pixCountHei = 14, eatArrX, eatArrY, wayOld,
 			wayNew;
@@ -61,15 +45,16 @@ public class GameScreen implements Screen, InputProcessor {
 	private  char[] charArray;
 	private float speed, accelerate=0.04f, mobSpeed=0.58f;
 	private RootGame rootGame;
-	private Sprite controlSp;
-	private Actor actor;
-	private BitmapFont font;
+	private BitmapFont font, fontDone;
 	float w = Gdx.graphics.getWidth();
 	float h = Gdx.graphics.getHeight();
 	private int level;
 	private boolean ifPause;
 	private int score;
 	private int i =0;
+	private float alpha;
+	private float timeAfterShowSucces;
+	private boolean visible;
 	
 	public GameScreen(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -90,68 +75,56 @@ public class GameScreen implements Screen, InputProcessor {
 		speed=0.58f;
 		level=rootGame.getLevel();
 		score=0;
-		
+		alpha=0f;
+		timeAfterShowSucces=0;
+		visible=false;
 		for (int i = 0; i < pixCountWid; i++) {
 			for (int j = 0; j < pixCountHei; j++) {
 				map[i][j] = 0;
 			}
 		}
 		mobsWay= new ArrayList();
-		
 		parts = new ArrayList<SnakePart>();
 		pickedUp= new ArrayList<PickedUpPos>();
 		wallsSp=new ArrayList<Sprite>();
 		wayNew=3;
 		wayOld=3;
-	
+		
+		ResourseManager.getInstance(); // йде як конструктор, див Singleton		
+			
 		camera = new OrthographicCamera(320, 480);
 		batch = new SpriteBatch();
-
-		background = new Texture(Gdx.files.internal("data/bgSnake.png"));
-		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bgSp = new Sprite(background);
+		
+		bgSp=new Sprite(ResourseManager.getInstance().background);
 		bgSp.setPosition(0, 0);
 		bgSp.setSize(w, h);
 		headPart = new SnakePart(pixCountWid / 2, pixCountHei / 2, "head");
 		parts.add(headPart);
 		
-		borderTx=new Texture(Gdx.files.internal("data/parts/border.png"));
-		borderTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		wallTx=new Texture(Gdx.files.internal("data/parts/wall.png"));
-		wallTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		controlBut = new Texture(Gdx.files.internal("data/control.png"));
-		controlBut.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		controlSp=new Sprite(controlBut);
-		
-		pauseTx=new Texture(Gdx.files.internal("data/pause.png"));
-		pauseTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		pauseSp=new Sprite(pauseTx);
+		controlSp=new Sprite(ResourseManager.getInstance().controlBut);
+	
+		pauseSp=new Sprite(ResourseManager.getInstance().pauseTx);
 		pauseSp.setSize(0.1f*w, 0.15f*h);
 		pauseSp.setPosition(0, 13*SQUARE_HEIGHT);
 		
-		bigPause=new Sprite(pauseTx);
+		bigPause=new Sprite(ResourseManager.getInstance().pauseTx);
 		bigPause.setSize(0.5f*w, 0.6f*h);
 		bigPause.setPosition(0.27f*w, 0.38f*h);
-		
-		exitTx=new Texture(Gdx.files.internal("data/exit.png"));
-		exitTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		exitSp=new Sprite(exitTx);
+	
+		exitSp=new Sprite(ResourseManager.getInstance().exitTx);
 		exitSp.setSize(0.1f*w, 0.15f*h);
 		exitSp.setPosition(18*SQUARE_WIDTH, 13*SQUARE_HEIGHT);
 		
-		eatTx = new Texture(Gdx.files.internal("data/eat.png"));
-		eatTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		snakeEat = new Sprite(eatTx);
+		snakeEat = new Sprite(ResourseManager.getInstance().eatTx);
 		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		fontTx = new Texture(Gdx.files.internal("data/font/neucha.png"));
-		fontTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(fontTx), false);
+		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
 		font.setScale(0.35f);
 		
-		mob=new Sprite(borderTx);
+		fontDone = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
+		fontDone.setScale(0.35f);
+		
+		mob=new Sprite(ResourseManager.getInstance().borderTx);
 		mob.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
 		readArr();
@@ -215,7 +188,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void createWallSp (int mapX, int mapY, String type){
 		map[mapX][mapY]=1;
-		Sprite sp = (type=="border") ? new Sprite(borderTx):new Sprite(wallTx);
+		Sprite sp = (type=="border") ? new Sprite(ResourseManager.getInstance().borderTx):new Sprite(ResourseManager.getInstance().wallTx);
 		sp.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		sp.setPosition(mapX*SQUARE_WIDTH, mapY*SQUARE_HEIGHT);
 		wallsSp.add(sp);
@@ -296,6 +269,17 @@ public class GameScreen implements Screen, InputProcessor {
 		
 		if(ifPause==true) {
 			bigPause.draw(batch, 0.6f);
+		}
+		
+		
+		if(score>=2) {
+			timeAfterShowSucces+=delta;
+			if(timeAfterShowSucces<8f) {
+				if(alpha<1 && !visible) fontDone.setColor(1, 1, 1, alpha+=0.005f);
+				if(alpha>1) visible=true;
+				if (visible && alpha>=0) fontDone.setColor(1, 1, 1, alpha-=0.005f);
+				fontDone.draw(batch, "Level completed!", 3*SQUARE_WIDTH, 6*SQUARE_HEIGHT);
+			}
 		}
 		
 		snakeEat.draw(batch);
@@ -412,15 +396,9 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void dispose() {
 		font.dispose();
+		fontDone.dispose();
 		batch.dispose();
-		eatTx.dispose();
-		background.dispose(); 
-		borderTx.dispose();
-		wallTx.dispose();		
-		controlBut.dispose();
-		fontTx.dispose();
-		pauseTx.dispose();
-		exitTx.dispose();
+		ResourseManager.getInstance().dispose();
 		
 	}
 

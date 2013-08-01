@@ -1,25 +1,21 @@
 package com.me.snake;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.me.snake.screens.GameScreen;
 
 public class SnakePart {
-	private Texture texture;
+	private Texture headTx,tailTx,bodyTx;
 	private Sprite sp;
 	private int mapX, mapY;
 	private float x,y;
-	
+
 	public SnakePart(int mapX, int mapY, String type) {
-		texture = new Texture(Gdx.files.internal("data/parts/snakePart.png"));
 		
-		if(type=="head") texture = new Texture(Gdx.files.internal("data/parts/snakePartHead.png")); 
-		else if (type=="tail") texture = new Texture(Gdx.files.internal("data/parts/snakePartTail.png"));
+		if(type=="head") sp=new Sprite(ResourseManager.getInstance().headTx);
+		else if (type=="tail") sp=new Sprite(ResourseManager.getInstance().tailTx);
+		else sp=new Sprite(ResourseManager.getInstance().bodyTx);
 		
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		sp=new Sprite(texture);
 		sp.setPosition(mapX*GameScreen.SQUARE_WIDTH, mapY*GameScreen.SQUARE_HEIGHT);
 		sp.setSize(GameScreen.SQUARE_WIDTH, GameScreen.SQUARE_HEIGHT);
 		x=sp.getX();
