@@ -153,37 +153,8 @@ public class SelectLevel implements Screen, InputProcessor {
 
 		batch.begin();
 		background.draw(batch);
-		if(getScore()>=23) {
-			starSp.setPosition(0.42f*w, 0.52f*h);
-			starSp.draw(batch);
-			
-		}
-		if(getScore()>=26){
-			starSp.setPosition(0.57f*w, 0.52f*h);
-			starSp.draw(batch);
-		}
-		if(getScore()>=29){
-			starSp.setPosition(0.72f*w, 0.52f*h);
-			starSp.draw(batch); 
-		} //Тіпа крутий парсер зірок   // 400 266   240 202
-		
-		if(unlockedLvl>level){  //Малюємо "Пройдено"
-			completedSp.draw(batch);	
-		}
-		
-		if(level>unlockedLvl) { //малюємо цепки якшо  лвл закритий
-		closedSp.draw(batch);
-		}
-			
-		font.draw(batch, "Level: " + level, 0.35f * w, 0.65f * h);
-		font.draw(batch, "Record: " + getScore(), 40, 0.92f*h);
-		
-		batch.draw(controlSp, 0.15f * w, 0.45f * h, controlSp.getWidth() / 2,
-				controlSp.getHeight() / 2, controlSp.getWidth(),
-				controlSp.getHeight(), 1f, 1.2f, 90, false);
-		batch.draw(controlSp, 0.75f * w, 0.5f * h, controlSp.getWidth() / 2,
-				controlSp.getHeight() / 2, controlSp.getWidth(),
-				controlSp.getHeight(), 1f, 1.3f, 90, true);
+		drawLvlInfo();
+		drawButton();
 		
 		batch.end();
 		stage.act(delta);
@@ -222,6 +193,43 @@ public class SelectLevel implements Screen, InputProcessor {
         float BLUE = b / 255.0f;
         return new Color(RED, GREEN, BLUE, 1);
 }
+	
+	private void drawLvlInfo(){
+		if(getScore()>=23) {
+			starSp.setPosition(0.42f*w, 0.52f*h);
+			starSp.draw(batch);
+			
+		}
+		if(getScore()>=26){
+			starSp.setPosition(0.57f*w, 0.52f*h);
+			starSp.draw(batch);
+		}
+		if(getScore()>=29){
+			starSp.setPosition(0.72f*w, 0.52f*h);
+			starSp.draw(batch); 
+		} //Тіпа крутий парсер зірок   // 400 266   240 202
+		
+		if(unlockedLvl>level){  //Малюємо "Пройдено"
+			completedSp.draw(batch);	
+		}
+		
+		if(level>unlockedLvl) { //малюємо цепки якшо  лвл закритий
+		closedSp.draw(batch);
+		}
+		
+		font.draw(batch, "Level: " + level, 0.35f * w, 0.65f * h);
+		font.draw(batch, "Record: " + getScore(), 40, 0.92f*h);
+	}
+	
+	private void drawButton(){
+		batch.draw(controlSp, 0.15f * w, 0.45f * h, controlSp.getWidth() / 2,
+				controlSp.getHeight() / 2, controlSp.getWidth(),
+				controlSp.getHeight(), 1f, 1.2f, 90, false);
+		batch.draw(controlSp, 0.75f * w, 0.5f * h, controlSp.getWidth() / 2,
+				controlSp.getHeight() / 2, controlSp.getWidth(),
+				controlSp.getHeight(), 1f, 1.3f, 90, true);
+		
+	}
 	
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {

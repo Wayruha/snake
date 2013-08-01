@@ -29,7 +29,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private Actor actor;
 	private SpriteBatch batch;
-	private Sprite snakeEat, bgSp,pauseSp, bigPause, mob, exitSp, controlSp;
+	private Sprite snakeEat, bgSp,pauseSp, bigPause, mob, exitSp, controlSp, visibleApple;
 	public static float SQUARE_WIDTH, SQUARE_HEIGHT;
 	int pixCountWid = 20, pixCountHei = 14, eatArrX, eatArrY, wayOld,
 			wayNew;
@@ -52,8 +52,8 @@ public class GameScreen implements Screen, InputProcessor {
 	private boolean ifPause;
 	private int score;
 	private int i =0;
-	private float alpha;
-	private float timeAfterShowSucces;
+	private float alpha, appleAlpha;
+	private float timeAfterShowCompleted;
 	private boolean visible;
 	
 	public GameScreen(RootGame rootGame) {
@@ -76,7 +76,8 @@ public class GameScreen implements Screen, InputProcessor {
 		level=rootGame.getLevel();
 		score=0;
 		alpha=0f;
-		timeAfterShowSucces=0;
+		appleAlpha=0f;
+		timeAfterShowCompleted=0;
 		visible=false;
 		for (int i = 0; i < pixCountWid; i++) {
 			for (int j = 0; j < pixCountHei; j++) {
@@ -118,11 +119,14 @@ public class GameScreen implements Screen, InputProcessor {
 		snakeEat = new Sprite(ResourseManager.getInstance().eatTx);
 		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
+		visibleApple=new Sprite(ResourseManager.getInstance().eatTx);
+		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
+		
 		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
 		font.setScale(0.35f);
 		
 		fontDone = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
-		fontDone.setScale(0.35f);
+		fontDone.setScale(0.5f);
 		
 		mob=new Sprite(ResourseManager.getInstance().borderTx);
 		mob.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
@@ -151,7 +155,6 @@ public class GameScreen implements Screen, InputProcessor {
 	
 		JSONArray array=(JSONArray)obj;   //Конвертуємо стрічку в массив! 
 		
-		
 		for (int i = 0; i < array.size(); i++) {
 			JSONArray arrayList =  (JSONArray) array.get(i); //Робимо аррайліст ДЖСОНАрраїв
 			ArrayList<Byte> bytes = new ArrayList<Byte>(); 
@@ -167,6 +170,11 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void pickUp() {
+		if(score>1)
+		{
+			visibleApple.setPosition(snakeEat.getX(), snakeEat.getY());
+			appleAlpha=1f;
+		}
 		score++;
 		boolean goodPos = false;
 		int randX;
@@ -214,83 +222,31 @@ public class GameScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		if(parts.size()%3==0 & ifAccelerate==true) {
-			speed-=accelerate;
-			ifAccelerate=false;
-		}
 		
 		if(ifPause!= true) {
-			time +=delta;
-			
-			if(time>mobSpeed){
-				mobMove();
-			}
-			
-			if (time > speed) {
+			step(delta);
+		}
 		
-				move(); //крок	
-				if (parts.get(0).getMapX() == eatArrX && parts.get(0).getMapY() == eatArrY) {
-				pickUp();
-			}	
-			
-			
-			//Розмноження
-			for (Iterator<PickedUpPos> it=pickedUp.iterator(); it.hasNext();) {
-				PickedUpPos pos=it.next();
-				if (pos.addToBack) {         //Додаємо новий кусок
-					parts.add(new SnakePart(pos.mapX, pos.mapY,""));
-					it.remove();
-					continue;
-				} 
-			
-				if (parts.get(parts.size() - 1).getMapX() == pos.mapX
-						&& parts.get(parts.size()-1).getMapY() == pos.mapY) {
-					pos.addToBack = true;
-				}
-
-			}
-			
-			time = 0;
-		}
-		}
-		snakeTail=new SnakePart(parts.get(parts.size()-1).getMapX(),parts.get(parts.size()-1).getMapY(), "tail"); //малюємо хвіст
 		
 		batch.begin();
 		
 		bgSp.draw(batch);
 		for(Sprite wall:wallsSp){
 			wall.draw(batch);
-}
-		headPart.getSp().draw(batch);
-		for (int i=1; i<parts.size()-1;i++) {
-			parts.get(i).getSp().draw(batch);
 		}
-		if (parts.size()>1) snakeTail.getSp().draw(batch);
-		
+		drawSnake();
+		completedLvlText(delta);
+		snakeEat.draw(batch);
+		ateApple();
+		pauseSp.draw(batch);
+		exitSp.draw(batch);
+		ctrlButDraw();
+		font.draw(batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
+		mob.draw(batch);
 		if(ifPause==true) {
 			bigPause.draw(batch, 0.6f);
 		}
 		
-		
-		if(score>=2) {
-			timeAfterShowSucces+=delta;
-			if(timeAfterShowSucces<8f) {
-				if(alpha<1 && !visible) fontDone.setColor(1, 1, 1, alpha+=0.005f);
-				if(alpha>1) visible=true;
-				if (visible && alpha>=0) fontDone.setColor(1, 1, 1, alpha-=0.005f);
-				fontDone.draw(batch, "Level completed!", 3*SQUARE_WIDTH, 6*SQUARE_HEIGHT);
-			}
-		}
-		
-		snakeEat.draw(batch);
-		pauseSp.draw(batch);
-		exitSp.draw(batch);
-		batch.draw(controlSp, -2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.5f, 2.1f, 180, true);
-		batch.draw(controlSp, 4*SQUARE_WIDTH, -7, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 270, true);
-		batch.draw(controlSp, 15*SQUARE_WIDTH-5, 4, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 90, true);
-		batch.draw(controlSp, 19*SQUARE_WIDTH+2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 0, true);
-		font.draw(batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
-		mob.draw(batch);
 		batch.end();
 
 	}
@@ -307,41 +263,8 @@ public class GameScreen implements Screen, InputProcessor {
 						}
 					}
 					
-					headPart.getSp().setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
-					switch (wayNew) { //Повертаємо голову
-					case 1:
-						headPart.getSp().setRotation(180);
-						break;
-					case 2:
-						headPart.getSp().setRotation(90);
-						break;
-					case 3:
-						headPart.getSp().setRotation(0);
-						break;
-					case 4:
-						headPart.getSp().setRotation(-90);
-						break;
-					}
-					
-		switch (wayNew) {
-		case 1:
-			headPart.setMapX(-1);
-			headPart.getSp().setX(headPart.getMapX()*SQUARE_WIDTH);
-			break;
-		case 2:
-			headPart.setMapY(1);
-			headPart.getSp().setY(headPart.getMapY()*SQUARE_HEIGHT);
-			break;
-		case 3:
-			headPart.setMapX(1);
-			headPart.getSp().setX(headPart.getMapX()*SQUARE_WIDTH);
-			break;
-		case 4:
-			headPart.setMapY(-1);
-			headPart.getSp().setY(headPart.getMapY()*SQUARE_HEIGHT);
-			break;
-		}
-		
+		turnHead(wayNew);
+
 		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
 		 ///Програвв
 			dispose();
@@ -402,6 +325,117 @@ public class GameScreen implements Screen, InputProcessor {
 		
 	}
 
+	private void step(float delta){
+		
+		if(parts.size()%3==0 & ifAccelerate==true) {
+			speed-=accelerate;
+			ifAccelerate=false;
+		}
+		time +=delta;
+		if(time>mobSpeed){
+			mobMove();
+		}
+		
+		if (time > speed) {
+			move(); //крок	
+			if (parts.get(0).getMapX() == eatArrX && parts.get(0).getMapY() == eatArrY) {
+			pickUp(); //з`їли
+		}	
+		
+		//Розмноження
+		for (Iterator<PickedUpPos> it=pickedUp.iterator(); it.hasNext();) {
+			PickedUpPos pos=it.next();
+			if (pos.addToBack) {         //Додаємо новий кусок
+				parts.add(new SnakePart(pos.mapX, pos.mapY,""));
+				it.remove();
+				continue;
+			} 
+		
+			if (parts.get(parts.size() - 1).getMapX() == pos.mapX
+					&& parts.get(parts.size()-1).getMapY() == pos.mapY) {
+				pos.addToBack = true;
+			}
+
+		}
+		
+		time = 0;
+	}
+	}
+	
+	private void drawSnake(){
+		snakeTail=new SnakePart(parts.get(parts.size()-1).getMapX(),parts.get(parts.size()-1).getMapY(), "tail"); //малюємо хвіст
+		headPart.getSp().draw(batch);
+		for (int i=1; i<parts.size()-1;i++) {
+			parts.get(i).getSp().draw(batch);
+		}
+		if (parts.size()>1) snakeTail.getSp().draw(batch);
+	}
+	
+	private void completedLvlText(float delta){
+		
+		if(score>=20) {
+			timeAfterShowCompleted+=delta;
+			if(timeAfterShowCompleted<6.3f) {
+				if(alpha<1 && !visible) fontDone.setColor(1, 1, 1, alpha+=0.005f);
+				if(alpha>1) visible=true;
+				if (visible && alpha>=0) fontDone.setColor(1, 1, 1, alpha-=0.005f);
+				fontDone.draw(batch, "Level completed!", 6*SQUARE_WIDTH, 8*SQUARE_HEIGHT);
+			}
+		}
+	}
+	
+	private void ateApple(){
+		if(appleAlpha>0.05f){
+			visibleApple.setY(visibleApple.getY()+2.1f);
+			visibleApple.draw(batch, appleAlpha-=0.048f);
+		}
+	}
+	
+	private void ctrlButDraw(){
+		batch.draw(controlSp, -2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.5f, 2.1f, 180, true);
+		batch.draw(controlSp, 4*SQUARE_WIDTH, -7, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 270, true);
+		batch.draw(controlSp, 15*SQUARE_WIDTH-5, 4, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 90, true);
+		batch.draw(controlSp, 19*SQUARE_WIDTH+2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 0, true);
+	}
+	
+	
+	private void turnHead(int wayNew){
+		headPart.getSp().setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
+		switch (wayNew) { //Повертаємо голову
+		case 1:
+			headPart.getSp().setRotation(180);
+			break;
+		case 2:
+			headPart.getSp().setRotation(90);
+			break;
+		case 3:
+			headPart.getSp().setRotation(0);
+			break;
+		case 4:
+			headPart.getSp().setRotation(-90);
+			break;
+		}
+		
+switch (wayNew) {
+case 1:
+headPart.setMapX(-1);
+headPart.getSp().setX(headPart.getMapX()*SQUARE_WIDTH);
+break;
+case 2:
+headPart.setMapY(1);
+headPart.getSp().setY(headPart.getMapY()*SQUARE_HEIGHT);
+break;
+case 3:
+headPart.setMapX(1);
+headPart.getSp().setX(headPart.getMapX()*SQUARE_WIDTH);
+break;
+case 4:
+headPart.setMapY(-1);
+headPart.getSp().setY(headPart.getMapY()*SQUARE_HEIGHT);
+break;
+}
+	}
+	
 	
 	@Override
 	public void pause() {
@@ -432,13 +466,6 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	
- /*	public void readMobsWay() {
-		FileHandle handle = Gdx.files.internal("data/name.txt");
-		Json json = new Json();
-		String newText = handle.readString(); // read Json from file // sec
-		mobsWay = json.fromJson(ArrayList.class, newText);
-	}
-*/	
 	@Override
 	public boolean keyUp(int keycode) {
 		return false;

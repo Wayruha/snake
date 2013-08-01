@@ -62,7 +62,6 @@ public class GameOver implements Screen, InputProcessor {
 		scoresArr = json.fromJson(ArrayList.class, newText);
 		record = ((Float) scoresArr.get(level)).intValue();
 		int unlockedLvl= ((Float) scoresArr.get(scoresArr.size()-1)).intValue();
-		System.out.println(unlockedLvl);
 		
 		if(unlockedLvl==level){
 			if(score<RootGame.NEED_POINTS){
