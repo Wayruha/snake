@@ -373,7 +373,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private void completedLvlText(float delta){
 		
-		if(score>=20) {
+		if(score>=20 && level!=0) {
 			timeAfterShowCompleted+=delta;
 			if(timeAfterShowCompleted<6.3f) {
 				if(alpha<1 && !visible) fontDone.setColor(1, 1, 1, alpha+=0.005f);

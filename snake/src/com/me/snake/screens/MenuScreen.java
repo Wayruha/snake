@@ -84,7 +84,7 @@ public class MenuScreen implements Screen, InputProcessor {
 		camera = new OrthographicCamera(320, 480);
 		batch = new SpriteBatch();
 
-		bgTx = new Texture(Gdx.files.internal("data/bgMenu.png"));
+		bgTx = new Texture(Gdx.files.internal("data/bg.png"));
 		bgTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		background = new Sprite(bgTx);
 		background.setSize(w, h);

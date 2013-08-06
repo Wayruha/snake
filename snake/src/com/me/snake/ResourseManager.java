@@ -30,7 +30,7 @@ public class ResourseManager {
 
 	public void resourseManager() {
 
-		background = new Texture(Gdx.files.internal("data/bgSnake.png"));
+		background = new Texture(Gdx.files.internal("data/bg.png"));
 		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		borderTx = new Texture(Gdx.files.internal("data/parts/border.png"));

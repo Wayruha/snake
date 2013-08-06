@@ -109,7 +109,7 @@ public class GameOver implements Screen, InputProcessor {
 		actor = new Actor();
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 		
-		texture=new Texture(Gdx.files.internal("data/bgMenu.png"));
+		texture=new Texture(Gdx.files.internal("data/bg.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		background=new Sprite(texture);
 		background.setPosition(0, 0);
