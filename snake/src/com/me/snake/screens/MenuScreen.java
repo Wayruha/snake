@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
@@ -20,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -30,10 +28,9 @@ import com.me.snake.RootGame;
 
 public class MenuScreen implements Screen, InputProcessor {
 
-	private Texture buttonTx, fontTx ,bgTx, recordTx, menuTx;
-	private Sprite background, buttonSp, buttonStart, buttonScores, snMenuSp,starSp;
+	private Texture fontTx ,bgTx, recordTx, menuTx;
+	private Sprite background, snMenuSp,starSp;
 	private RootGame rootGame;
-	private GameOver gameOver;
 	private SelectLevel   selectLevel;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
@@ -103,17 +100,17 @@ public class MenuScreen implements Screen, InputProcessor {
 		snMenuSp.setSize(0.73f*512*w/480, 0.73f*512*h/320);
 		snMenuSp.setPosition(0.13f*w, 0.2f*h);
 		
-		fontTx = new Texture(Gdx.files.internal("data/font/neucha.png"));
+		fontTx = new Texture(Gdx.files.internal("data/font/snake.png"));
 		fontTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"),
+		font = new BitmapFont(Gdx.files.internal("data/font/snake.fnt"),
 				new TextureRegion(fontTx), false);
 		buttonStyle.font = font;
-		buttonStyle.font.setScale(0.65f*w/480, 0.65f*h/320);
+		buttonStyle.font.setScale(1f*w/480, 1f*h/320);
 	    buttonStyle.downFontColor = new Color(toRGB(2, 1, 1));
 		
-		fontSc = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"),
+		fontSc = new BitmapFont(Gdx.files.internal("data/font/wal.fnt"),
 				new TextureRegion(fontTx), false);
-		fontSc.setScale(0.55f*w/480,0.55f*h/320);
+		fontSc.setScale(2f*w/480,2f*h/320);
 		
 		fastGame=new TextButton("Fast game", buttonStyle);
 		fastGame.setPosition(0.38f*w, 0.47f*h);
@@ -122,6 +119,7 @@ public class MenuScreen implements Screen, InputProcessor {
 	    	public void touchUp(InputEvent event, float x, float y,
 	    			int pointer, int button) {
 	    		rootGame.setLevel(0);
+	    		dispose();
 	    		rootGame.setScreen(rootGame.gameScreen);
 	    	//	return super.touchUp(event, x, y, pointer, button);
 	    	}
@@ -134,6 +132,7 @@ public class MenuScreen implements Screen, InputProcessor {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
 	    			int pointer, int button) {
+	    		dispose();
 	    		rootGame.setScreen(rootGame.selectLevel);
 	    		//return super.touchDown(event, x, y, pointer, button);
 	    	}
@@ -170,11 +169,9 @@ public class MenuScreen implements Screen, InputProcessor {
 		font.dispose();
 		stage.dispose();
 		fontTx.dispose();
-		buttonTx.dispose();
 		bgTx.dispose();
 		recordTx.dispose();
 		menuTx.dispose();
-		stage.dispose();
 		
 
 	}

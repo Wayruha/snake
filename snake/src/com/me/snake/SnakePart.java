@@ -15,7 +15,6 @@ public class SnakePart {
 		if(type=="head") sp=new Sprite(ResourseManager.getInstance().headTx);
 		else if (type=="tail") sp=new Sprite(ResourseManager.getInstance().tailTx);
 		else sp=new Sprite(ResourseManager.getInstance().bodyTx);
-		
 		sp.setPosition(mapX*GameScreen.SQUARE_WIDTH, mapY*GameScreen.SQUARE_HEIGHT);
 		sp.setSize(GameScreen.SQUARE_WIDTH, GameScreen.SQUARE_HEIGHT);
 		x=sp.getX();

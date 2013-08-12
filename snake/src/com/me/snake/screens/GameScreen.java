@@ -120,7 +120,7 @@ public class GameScreen implements Screen, InputProcessor {
 		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
 		visibleApple=new Sprite(ResourseManager.getInstance().eatTx);
-		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
+		visibleApple.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
 		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
 		font.setScale(0.35f);
@@ -170,12 +170,12 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void pickUp() {
+		score++;
 		if(score>1)
 		{
 			visibleApple.setPosition(snakeEat.getX(), snakeEat.getY());
 			appleAlpha=1f;
 		}
-		score++;
 		boolean goodPos = false;
 		int randX;
 		int randY;
@@ -209,7 +209,6 @@ public class GameScreen implements Screen, InputProcessor {
 		mob.setPosition(mobsWay.get(i).get(0) *SQUARE_WIDTH, mobsWay.get(i).get(1)*SQUARE_HEIGHT);
 		if(map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)]==1) {
 			 ///Програвв
-			dispose();
 			rootGame.gameOver.setScore(parts.size());
 			rootGame.setScreen(rootGame.gameOver);
 		}
