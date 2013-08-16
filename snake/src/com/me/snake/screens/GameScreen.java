@@ -12,7 +12,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -20,6 +22,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.me.snake.PickedUpPos;
 import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
@@ -28,22 +32,22 @@ import com.me.snake.SnakePart;
 public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private Actor actor;
-	private SpriteBatch batch;
 	private Sprite snakeEat, bgSp,pauseSp, bigPause, mob, exitSp, controlSp, visibleApple;
+	private Image controlUp,controlDown, controlLeft, controlRight;
 	public static float SQUARE_WIDTH, SQUARE_HEIGHT;
 	int pixCountWid = 20, pixCountHei = 14, eatArrX, eatArrY, wayOld,
 			wayNew;
 	private Random random = new Random();
 	private int[][] map = new int [pixCountWid][pixCountHei];
-	private boolean ifAccelerate=false;
-	private float time = 0;
+	private boolean ifAccelerate;
+	private float time = 0, mobsTime=0;
 	private SnakePart headPart, snakeTail;
 	private ArrayList<SnakePart> parts;
 	private ArrayList<PickedUpPos> pickedUp;
 	private ArrayList<Sprite> wallsSp;
 	ArrayList<ArrayList<Byte>> mobsWay;  
 	private  char[] charArray;
-	private float speed, accelerate=0.04f, mobSpeed=0.58f;
+	private float speed, accelerate, mobSpeed=0.5f;
 	private RootGame rootGame;
 	private BitmapFont font, fontDone;
 	float w = Gdx.graphics.getWidth();
@@ -51,7 +55,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private int level;
 	private boolean ifPause;
 	private int score;
-	private int i =0;
+	private int i;
 	private float alpha, appleAlpha;
 	private float timeAfterShowCompleted;
 	private boolean visible;
@@ -72,13 +76,20 @@ public class GameScreen implements Screen, InputProcessor {
 	public void show() {
 		SQUARE_WIDTH = w / pixCountWid; // задаємо ш\в клітинки
 		SQUARE_HEIGHT = h / pixCountHei;
-		speed=0.58f;
+		//stage=new Stage(0,0,true);
+		//stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
+		//stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		ifAccelerate=false;
+		speed=0.5f;
+		accelerate=0.04f;
 		level=rootGame.getLevel();
+		i=0;
 		score=0;
 		alpha=0f;
 		appleAlpha=0f;
 		timeAfterShowCompleted=0;
 		visible=false;
+		ifPause=false;
 		for (int i = 0; i < pixCountWid; i++) {
 			for (int j = 0; j < pixCountHei; j++) {
 				map[i][j] = 0;
@@ -90,20 +101,21 @@ public class GameScreen implements Screen, InputProcessor {
 		wallsSp=new ArrayList<Sprite>();
 		wayNew=3;
 		wayOld=3;
-		
-		ResourseManager.getInstance(); // йде як конструктор, див Singleton		
+				
 			
 		camera = new OrthographicCamera(320, 480);
-		batch = new SpriteBatch();
 		
-		bgSp=new Sprite(ResourseManager.getInstance().background);
+		bgSp=new Sprite(ResourseManager.getInstance().backgroundGame);
 		bgSp.setPosition(0, 0);
 		bgSp.setSize(w, h);
 		headPart = new SnakePart(pixCountWid / 2, pixCountHei / 2, "head");
 		parts.add(headPart);
 		
 		controlSp=new Sprite(ResourseManager.getInstance().controlBut);
-	
+		controlSp.setSize(0.1f*128*w/480, 2f*128*h/320);
+		
+		drawCtrlBut();
+		
 		pauseSp=new Sprite(ResourseManager.getInstance().pauseTx);
 		pauseSp.setSize(0.1f*w, 0.15f*h);
 		pauseSp.setPosition(0, 13*SQUARE_HEIGHT);
@@ -122,10 +134,10 @@ public class GameScreen implements Screen, InputProcessor {
 		visibleApple=new Sprite(ResourseManager.getInstance().eatTx);
 		visibleApple.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
+		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontScTx), false);
 		font.setScale(0.35f);
 		
-		fontDone = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontTx), false);
+		fontDone = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontScTx), false);
 		fontDone.setScale(0.5f);
 		
 		mob=new Sprite(ResourseManager.getInstance().borderTx);
@@ -140,11 +152,28 @@ public class GameScreen implements Screen, InputProcessor {
 		pickUp();
 	}
 
+	
+	private void drawCtrlBut(){
+		controlUp=new Image(ResourseManager.getInstance().controlBut);
+		controlUp.rotate(270);
+		controlUp.setName("ctrlUp");
+		controlUp.setPosition(-2, 7*SQUARE_HEIGHT);
+		
+		controlUp=new Image(ResourseManager.getInstance().controlBut);
+		controlUp.rotate(90);
+		controlUp.setName("ctrlDown");
+		controlUp=new Image(ResourseManager.getInstance().controlBut);
+		controlUp.rotate(180);
+		controlUp.setName("ctrlLeft");
+		controlUp=new Image(ResourseManager.getInstance().controlBut);
+		controlUp.setName("ctrlRight");
+	
+	}
+	
 	private boolean readArr (){
 		FileHandle handle = Gdx.files.internal("data/mobs/level"+level+".txt");
 		if(handle.exists()){
 		String jsonText=handle.readString();  //Зчитали массив з файлу
-		
 		JSONParser parser = new JSONParser();
 		Object obj = null;
 		try {
@@ -204,11 +233,11 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private void mobMove(){
 		if(readArr()){
-			
 		if( i>=mobsWay.size()) i=0;
 		mob.setPosition(mobsWay.get(i).get(0) *SQUARE_WIDTH, mobsWay.get(i).get(1)*SQUARE_HEIGHT);
 		if(map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)]==1) {
 			 ///Програвв
+			dispose();
 			rootGame.gameOver.setScore(parts.size());
 			rootGame.setScreen(rootGame.gameOver);
 		}
@@ -222,31 +251,30 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
-		if(ifPause!= true) {
+		if(ifPause== false) {
 			step(delta);
 		}
 		
+		ResourseManager.getInstance().batch.begin();
 		
-		batch.begin();
-		
-		bgSp.draw(batch);
+		bgSp.draw(ResourseManager.getInstance().batch);
 		for(Sprite wall:wallsSp){
-			wall.draw(batch);
+			wall.draw(ResourseManager.getInstance().batch);
 		}
 		drawSnake();
 		completedLvlText(delta);
-		snakeEat.draw(batch);
+		snakeEat.draw(ResourseManager.getInstance().batch);
 		ateApple();
-		pauseSp.draw(batch);
-		exitSp.draw(batch);
+		pauseSp.draw(ResourseManager.getInstance().batch);
+		exitSp.draw(ResourseManager.getInstance().batch);
 		ctrlButDraw();
-		font.draw(batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
-		mob.draw(batch);
+		font.draw(ResourseManager.getInstance().batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
+		mob.draw(ResourseManager.getInstance().batch);
 		if(ifPause==true) {
-			bigPause.draw(batch, 0.6f);
+			bigPause.draw(ResourseManager.getInstance().batch, 0.6f);
 		}
 		
-		batch.end();
+		ResourseManager.getInstance().batch.end();
 
 	}
 	
@@ -265,7 +293,7 @@ public class GameScreen implements Screen, InputProcessor {
 		turnHead(wayNew);
 
 		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
-		 ///Програвв
+		 ///Програв
 			dispose();
 			rootGame.gameOver.setScore(score);
 			rootGame.setScreen(rootGame.gameOver);
@@ -319,20 +347,25 @@ public class GameScreen implements Screen, InputProcessor {
 	public void dispose() {
 		font.dispose();
 		fontDone.dispose();
-		batch.dispose();
-		ResourseManager.getInstance().dispose();
+		//ResourseManager.getInstance().dispose();
 		
 	}
 
 	private void step(float delta){
+		if(parts.size()%8==0 & ifAccelerate==true ) {
+			accelerate-=0.003f;
+			ifAccelerate=false;
+		}
 		
 		if(parts.size()%3==0 & ifAccelerate==true) {
 			speed-=accelerate;
 			ifAccelerate=false;
 		}
 		time +=delta;
-		if(time>mobSpeed){
+		mobsTime+=delta;
+		if(mobsTime>mobSpeed){
 			mobMove();
+			mobsTime=0;
 		}
 		
 		if (time > speed) {
@@ -363,22 +396,22 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private void drawSnake(){
 		snakeTail=new SnakePart(parts.get(parts.size()-1).getMapX(),parts.get(parts.size()-1).getMapY(), "tail"); //малюємо хвіст
-		headPart.getSp().draw(batch);
+		headPart.getSp().draw(ResourseManager.getInstance().batch);
 		for (int i=1; i<parts.size()-1;i++) {
-			parts.get(i).getSp().draw(batch);
+			parts.get(i).getSp().draw(ResourseManager.getInstance().batch);
 		}
-		if (parts.size()>1) snakeTail.getSp().draw(batch);
+		if (parts.size()>1) snakeTail.getSp().draw(ResourseManager.getInstance().batch);
 	}
 	
 	private void completedLvlText(float delta){
 		
-		if(score>=20 && level!=0) {
+		if(score>=RootGame.NEED_POINTS && level!=0) {
 			timeAfterShowCompleted+=delta;
 			if(timeAfterShowCompleted<6.3f) {
 				if(alpha<1 && !visible) fontDone.setColor(1, 1, 1, alpha+=0.005f);
 				if(alpha>1) visible=true;
 				if (visible && alpha>=0) fontDone.setColor(1, 1, 1, alpha-=0.005f);
-				fontDone.draw(batch, "Level completed!", 6*SQUARE_WIDTH, 8*SQUARE_HEIGHT);
+				fontDone.draw(ResourseManager.getInstance().batch, "Level completed!", 6*SQUARE_WIDTH, 8*SQUARE_HEIGHT);
 			}
 		}
 	}
@@ -386,15 +419,15 @@ public class GameScreen implements Screen, InputProcessor {
 	private void ateApple(){
 		if(appleAlpha>0.05f){
 			visibleApple.setY(visibleApple.getY()+2.1f);
-			visibleApple.draw(batch, appleAlpha-=0.048f);
+			visibleApple.draw(ResourseManager.getInstance().batch, appleAlpha-=0.048f);
 		}
 	}
 	
 	private void ctrlButDraw(){
-		batch.draw(controlSp, -2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.5f, 2.1f, 180, true);
-		batch.draw(controlSp, 4*SQUARE_WIDTH, -7, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 270, true);
-		batch.draw(controlSp, 15*SQUARE_WIDTH-5, 4, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 90, true);
-		batch.draw(controlSp, 19*SQUARE_WIDTH+2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 0, true);
+		ResourseManager.getInstance().batch.draw(controlSp, -2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.5f, 2.1f, 180, true);
+		ResourseManager.getInstance().batch.draw(controlSp, 4*SQUARE_WIDTH, -4, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 270, true);
+		ResourseManager.getInstance().batch.draw(controlSp, 15*SQUARE_WIDTH-5, 1, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 90, true);
+		ResourseManager.getInstance().batch.draw(controlSp, 19*SQUARE_WIDTH+2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 0, true);
 	}
 	
 	

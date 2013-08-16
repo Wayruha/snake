@@ -25,12 +25,13 @@ public class RootGame extends Game {
 
 	@Override
 	public void create() {
+		 ResourseManager.getInstance(); // йде як конструктор, див Singleton
 		gameScreen = new GameScreen(this);
 		menuScreen = new MenuScreen(this);
 		gameOver = new GameOver(this);
 		selectLevel = new SelectLevel(this);
 
-		setScreen(menuScreen);
+		setScreen(selectLevel);
 	}
 
 }

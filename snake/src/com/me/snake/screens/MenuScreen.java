@@ -19,26 +19,26 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
+import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
 
 public class MenuScreen implements Screen, InputProcessor {
 
-	private Texture fontTx ,bgTx, recordTx, menuTx;
 	private Sprite background, snMenuSp,starSp;
 	private RootGame rootGame;
-	private SelectLevel   selectLevel;
 	private SpriteBatch batch;
+	private SelectLevel   selectLevel;
 	private OrthographicCamera camera;
 	private float w = Gdx.graphics.getWidth();
 	private float h = Gdx.graphics.getHeight();
 	private Stage stage;
 	private Actor actor;
-	private BitmapFont font, fontSc;
 	private TextButton selectLevelButt;
 	private Table table;
 	private TextButton fastGame;
@@ -54,18 +54,22 @@ public class MenuScreen implements Screen, InputProcessor {
 	public void show() {
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-
+		
+		batch=new SpriteBatch();
+		
 		stage = new Stage(0, 0, true);
 	    table = new Table();
 		actor = new Actor();
 		table.add(actor);
+	//	stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
+	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		
 		Json json = new Json();
 		FileHandle handle = Gdx.files.local("scores.txt");
 	    if (!handle.exists()) {
 			   try {
 			    handle.file().createNewFile();
-			    String jsonText="[0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0]";
+			    String jsonText="[0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7]"; //змінити коли зміниться к-сть лвлів
 			    handle.writeString(jsonText, true);
 			   } catch (IOException e) {
 			    e.printStackTrace();
@@ -79,62 +83,48 @@ public class MenuScreen implements Screen, InputProcessor {
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 
 		camera = new OrthographicCamera(320, 480);
-		batch = new SpriteBatch();
-
-		bgTx = new Texture(Gdx.files.internal("data/bg.png"));
-		bgTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		background = new Sprite(bgTx);
+		
+		background = new Sprite(ResourseManager.getInstance().background);
 		background.setSize(w, h);
-		background.setPosition(0,0);
+		background.setPosition(0,0);		
 		
-		recordTx= new Texture(Gdx.files.internal("data/record.png"));
-		recordTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		starSp = new Sprite(recordTx);
-		starSp.setSize(0.95f*w, 1.1f*h);
-		starSp.setPosition(0.8f*w, 0.66f*h);
 		
-		menuTx = new Texture(Gdx.files.internal("data/SnakeMenu.png"));
-		menuTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		snMenuSp=new Sprite(menuTx);
-
-		snMenuSp.setSize(0.73f*512*w/480, 0.73f*512*h/320);
-		snMenuSp.setPosition(0.13f*w, 0.2f*h);
+		snMenuSp=new Sprite(ResourseManager.getInstance().menuTx);
+		snMenuSp.setSize(0.6f*512*w/480, 0.6f*512*h/320);
+		snMenuSp.setPosition(0.05f*w, 0.15f*h);
 		
-		fontTx = new Texture(Gdx.files.internal("data/font/snake.png"));
-		fontTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		font = new BitmapFont(Gdx.files.internal("data/font/snake.fnt"),
-				new TextureRegion(fontTx), false);
-		buttonStyle.font = font;
-		buttonStyle.font.setScale(1f*w/480, 1f*h/320);
-	    buttonStyle.downFontColor = new Color(toRGB(2, 1, 1));
 		
-		fontSc = new BitmapFont(Gdx.files.internal("data/font/wal.fnt"),
-				new TextureRegion(fontTx), false);
-		fontSc.setScale(2f*w/480,2f*h/320);
+		starSp = new Sprite(ResourseManager.getInstance().recordTx);
+		starSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
+		starSp.setPosition(0.72f*w, 0.62f*h);
+		
+		
+		buttonStyle.font = ResourseManager.getInstance().font;
+		buttonStyle.font.setScale(0.6f*w/480, 0.6f*h/320);
+	    buttonStyle.downFontColor = new Color(toRGB(227, 112, 30));
 		
 		fastGame=new TextButton("Fast game", buttonStyle);
-		fastGame.setPosition(0.38f*w, 0.47f*h);
+		fastGame.setPosition(0.4f*w, 0.47f*h);
 	    fastGame.addListener(new ClickListener() {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
 	    			int pointer, int button) {
-	    		rootGame.setLevel(0);
-	    		dispose();
-	    		rootGame.setScreen(rootGame.gameScreen);
-	    	//	return super.touchUp(event, x, y, pointer, button);
+	    				rootGame.setLevel(0);
+	    	    		dispose();
+	    	    		rootGame.setScreen(rootGame.gameScreen);
+	  
+	    		
 	    	}
 		});
 		
-		
 		selectLevelButt = new TextButton("Select level", buttonStyle);
-		selectLevelButt.setPosition(190, 90);
+		selectLevelButt.setPosition(0.4f*w, 0.28f*h);
 	    selectLevelButt.addListener(new ClickListener() {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
 	    			int pointer, int button) {
-	    		dispose();
-	    		rootGame.setScreen(rootGame.selectLevel);
-	    		//return super.touchDown(event, x, y, pointer, button);
+	    	    		dispose();
+	    	    		rootGame.setScreen(rootGame.selectLevel);
 	    	}
 		});
 	    stage.addActor(fastGame);
@@ -157,8 +147,7 @@ public class MenuScreen implements Screen, InputProcessor {
 		background.draw(batch);
 		snMenuSp.draw(batch);
 		starSp.draw(batch);
-		fontSc.draw(batch,bestScore, 0.86f*w,0.83f*h);
-		
+		ResourseManager.getInstance().fontSc.draw(batch,bestScore, 0.79f*w,0.86f*h);
 		batch.end();
 		stage.act(delta);
 		stage.draw();
@@ -166,13 +155,7 @@ public class MenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		font.dispose();
 		stage.dispose();
-		fontTx.dispose();
-		bgTx.dispose();
-		recordTx.dispose();
-		menuTx.dispose();
-		
 
 	}
 

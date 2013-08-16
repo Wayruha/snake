@@ -19,32 +19,27 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
+import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
 
 public class GameOver implements Screen, InputProcessor {
 	private OrthographicCamera camera;
-	private SpriteBatch batch;
-	private Texture texture, imgTx, recordTx, menuTx;
-	private Sprite background, rakSp, recordSp;
-	private Texture fontTx;
-	private BitmapFont font;
+	private Image ctrlPanel, nextLvl;
+	private Sprite background, recordSp;
 	private int score,record;
 	private float w,h;
 	private RootGame rootGame;
-	private FileHandle file;
-	private String message, img;
+	private String message;
 	BufferedWriter out = null;
-	private Sprite snMenuSp;
-	private BitmapFont fontSc;
 	private Stage stage;
 	private Actor actor;
-	private TextButton playButton;
-	private TextButton menuButton;
-	private int level;
+	private int level, unlockedLvl;
 	private ArrayList scoresArr;
 	
 	public GameOver(RootGame rootGame) {
@@ -61,33 +56,28 @@ public class GameOver implements Screen, InputProcessor {
 		String newText = handle.readString(); // read Json from file
 		scoresArr = json.fromJson(ArrayList.class, newText);
 		record = ((Float) scoresArr.get(level)).intValue();
-		int unlockedLvl= ((Float) scoresArr.get(scoresArr.size()-1)).intValue();
-		
-		if(unlockedLvl==level){
+		unlockedLvl= ((Float) scoresArr.get(scoresArr.size()-1)).intValue();
+		 
+		if(unlockedLvl==level){     
 			if(score<RootGame.NEED_POINTS){
 				message="N00b!Level failed";
-				img="rak";
+				if(score>record){
+					message="Nice!New record!";
+					scoresArr.set(level,score);
+					record=score;
+				}
 			} else {
 				scoresArr.set(level,score); 
 				scoresArr.set(scoresArr.size()-1, unlockedLvl+1);
-				img="notRak";
 				message="Nice!Level completed";
-			}
-			if(score>record){
-				message="Nice!New record!";
-				scoresArr.set(level,score);
-				record=score;
-				img="notRak";
 			}
 		} else {
 			if(score>record){
 				message="Nice!New record!";
 				scoresArr.set(level,score);
 				record=score;
-				img="notRak";
 			} else {
 				message="Your score: ";
-				img="rak";
 			}
 		}
 		
@@ -101,74 +91,41 @@ public class GameOver implements Screen, InputProcessor {
 		 h = Gdx.graphics.getHeight();
 		
 		level=rootGame.getLevel();
-		img="rak";
-
+ 
+		
 		camera = new OrthographicCamera(320, 480);
-		batch = new SpriteBatch();
 		stage = new Stage(0, 0, true);
 		actor = new Actor();
+		//stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
+	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 		
-		texture=new Texture(Gdx.files.internal("data/bg.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		background=new Sprite(texture);
+		
+		background=new Sprite(ResourseManager.getInstance().backgroundOver);
 		background.setPosition(0, 0);
 		background.setSize(w,h);
 		
-		recordTx=new Texture(Gdx.files.internal("data/record.png"));
-		recordTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		recordSp=new Sprite(recordTx);
-		recordSp.setPosition(1/48f*w, 0.69f*h);
-		recordSp.setSize(0.88f*w, 1.1f*h);
+		recordSp=new Sprite(ResourseManager.getInstance().recordTx);
+		recordSp.setPosition(0.7f*w, 0.72f*h);
+		recordSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
 		
-		menuTx = new Texture(Gdx.files.internal("data/SnakeMenu.png"));
-		menuTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		snMenuSp=new Sprite(menuTx);
-		snMenuSp.setSize(0.73f*512*w/480, 0.73f*512*h/320);
-		snMenuSp.setPosition(0.1f*w, 0.2f*h);
+		ctrlPanel=new Image(ResourseManager.getInstance().controlPanelTx);
+		ctrlPanel.setPosition(0.495f*w, 0);
+		ctrlPanel.setSize(0.5f*512*w/480, 0.45f*512*h/320);
+		ctrlPanel.addListener(buttonClickListener);
 		
-		imgTx=new Texture(Gdx.files.internal("data/"+img+".png"));
-		imgTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		rakSp=new Sprite(imgTx);
-		rakSp.setScale(0.7f);
-		rakSp.setPosition(0.19f*w, -0.2f*h);
+		nextLvl=new Image(ResourseManager.getInstance().nextLvlTx);
+		nextLvl.setName("nextLvl");
+		nextLvl.setPosition(0.75f*w, 0);
+		nextLvl.setSize(0.25f*w, 0.2f*w/1.45f);
+		nextLvl.addListener(buttonClickListener);
 		
-		fontTx = new Texture(Gdx.files.internal("data/font/neucha.png"));
-		fontTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(fontTx), false);
-		font.setScale(0.57f*w/480,0.57f*h/320);
-		fontSc = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(fontTx), false);
-		fontSc.setScale(0.5f*w/480,0.5f*h/320);
-		buttonStyle.font = font;
-		buttonStyle.downFontColor = new Color(toRGB(2, 1, 1));
-		
-		playButton=new TextButton("Play again", buttonStyle);
-		playButton.setPosition(0.6f*w, 0);
-		playButton.addActor(actor);
-		playButton.addListener(new ClickListener() {
-		    	@Override
-		    	public void touchUp(InputEvent event, float x, float y,
-		    			int pointer, int button) {
-		    		dispose();
-		    		rootGame.setScreen(rootGame.gameScreen);
-		    	}
-			});
-		menuButton=new TextButton("Menu", buttonStyle);
-		menuButton.setPosition(0.04f*w, -2);
-		menuButton.addActor(actor);
-		menuButton.addListener(new ClickListener() {
-		    	@Override
-		    	public void touchUp(InputEvent event, float x, float y,
-		    			int pointer, int button) {
-		    		dispose();
-		    		rootGame.setScreen(rootGame.menuScreen);
-		    	}
-			});
-		
-		
-		stage.addActor(playButton);
-		stage.addActor(menuButton);
 		setRecord();
+		if(message=="Nice!Level completed") nextLvl.setVisible(true); else  nextLvl.setVisible(false);
+
+		stage.addActor(ctrlPanel);
+		stage.addActor(nextLvl);
 		 Gdx.input.setInputProcessor(stage);
 	}
 	
@@ -182,17 +139,16 @@ public class GameOver implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
-		batch.begin();
-		background.draw(batch);
-		font.draw(batch,message,0.4f*w, 0.75f*h);
-		fontSc.draw(batch,""+record, 0.08f*w, 0.85f*h);
-		fontSc.draw(batch, String.valueOf(score), 0.34f*w, 0.63f*h);
-		snMenuSp.draw(batch);
-		rakSp.draw(batch);
-		recordSp.draw(batch);
-		playButton.draw(batch, 1f);
-		menuButton.draw(batch, 1f);
-		batch.end();
+		ResourseManager.getInstance().batch.begin();
+		background.draw(ResourseManager.getInstance().batch);
+		recordSp.draw(ResourseManager.getInstance().batch);
+		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,message,0.3f*w, 0.67f*h);
+		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch, "level "+level, 0.35f*w, 0.95f*h);
+		ResourseManager.getInstance().fontSc.setScale(0.3f*w/480,0.3f*h/320);
+		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch,""+record, 0.76f*w, 0.95f*h);
+		ResourseManager.getInstance().fontSc.setScale(0.42f*w/480,0.42f*h/320);
+		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch, String.valueOf(score), 0.3f*w, 0.5f*h);
+		ResourseManager.getInstance().batch.end();
 		stage.act(delta);
 		stage.draw();
 	}
@@ -200,24 +156,34 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void dispose() {
-		fontSc.dispose();
 		stage.dispose();
-		batch.dispose();
-		texture.dispose();
-		fontTx.dispose();
-		font.dispose();
-		imgTx.dispose();
-		recordTx.dispose();
-		menuTx.dispose();
-		
 	}
 	
-	private Color toRGB(int r, int g, int b) {
-        float RED = r / 255.0f;
-        float GREEN = g / 255.0f;
-        float BLUE = b / 255.0f;
-        return new Color(RED, GREEN, BLUE, 1);
-}
+	
+	public ClickListener buttonClickListener = new ClickListener() {
+		@Override
+		public void clicked (InputEvent event, float x, float y) {
+			if(x>=100 && y>=60 && y<=210) {
+				//start
+		    			rootGame.setLevel(level);
+	    	    		dispose();
+	    	    		rootGame.setScreen(rootGame.gameScreen);
+				}
+			 if(x<=110 && y<=80 ){
+				 //Menu
+		    	    		dispose();
+		    	    		rootGame.setScreen(rootGame.menuScreen);
+		    			}
+				 
+				 if(event.getListenerActor().getName()=="nextLvl") {
+					 
+			    				rootGame.setLevel(level+1);
+			    	    		rootGame.setScreen(rootGame.gameScreen);
+			    			}
+				 }
+	};
+
+	
 	
 	@Override
 	public boolean keyDown(int keycode) {
@@ -267,11 +233,6 @@ public class GameOver implements Screen, InputProcessor {
 		return false;
 	}
 
-	
-
-	
-
-	
 
 	@Override
 	public void hide() {
