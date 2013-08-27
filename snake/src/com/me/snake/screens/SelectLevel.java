@@ -1,43 +1,33 @@
 package com.me.snake.screens;
 
 import java.util.ArrayList;
-import javax.swing.text.StyledEditorKit.ForegroundAction;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Json;
 import com.me.snake.PagedScrollPane;
 import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
 
 public class SelectLevel implements Screen { 
-	private Skin skin;
 	private Stage stage;
-	private SpriteBatch batch;
 	private Table container;
 	private Image ctrlPanel;
 	float w,h;
@@ -49,6 +39,8 @@ public class SelectLevel implements Screen {
 	private int checkedLvl;
 	private ArrayList<Button> buttonArr;
 	private Label score;
+	private Image ctrlStart;
+	private Image ctrlBack;
 
 	public SelectLevel(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -60,30 +52,41 @@ public class SelectLevel implements Screen {
 	public void show() {
 		
 		stage=new Stage(0,0, false);
-		//stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
-	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
-		
+		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
+		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		ResourseManager.getInstance().fontSc.setScale(1);
 		 //ResourseManager.getInstance();
-		batch= new SpriteBatch();
 		 w = Gdx.graphics.getWidth();
 		 h = Gdx.graphics.getHeight();
 		 getScore(0);
 		 unlockedLvl=((Float) scoresArr.get(scoresArr.size()-1)).intValue();
 		 buttonArr=new ArrayList<Button>();
 		 
-		bgSp = new Sprite(ResourseManager.getInstance().background);
+		 checkedLvl=-1;
+		 
+		bgSp = new Sprite(ResourseManager.getInstance().backgroundSelectLvl);
 		bgSp.setPosition(0, 0);
 		bgSp.setSize(w, h);
 		
 		
-		ctrlPanel=new Image(ResourseManager.getInstance().controlPanelTx);
-		ctrlPanel.setPosition(0.495f*w, 0);
-		ctrlPanel.setSize(0.5f*512*w/480, 0.45f*512*h/320);
-		ctrlPanel.addListener(buttonClickListener);
+		ctrlStart=new Image(ResourseManager.getInstance().ctrlStart);
+		ctrlStart.setSize(0.5f*256*w/480, 0.5f*256*h/320);
+		ctrlStart.setPosition(0.73f*w, 0.15f*h);
+		ctrlStart.setName("start");
+		ctrlStart.addListener(buttonClickListener);
+		
+		
+		ctrlBack=new Image(ResourseManager.getInstance().ctrlBack);
+		ctrlBack.setSize(0.53f*256*w/480, 0.53f*256*h/320);
+		ctrlBack.setPosition(0.5f*w, -0.23f*h);
+		ctrlBack.setName("back");
+		ctrlBack.addListener(buttonClickListener);
+		
 		
 		Gdx.input.setInputProcessor(stage);
 	
-		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+		Skin skin = ResourseManager.getInstance().skin;
+		skin.add("font", ResourseManager.getInstance().fontSc);
 		skin.add("star", ResourseManager.getInstance().starTx);
 		skin.add("tile", ResourseManager.getInstance().tileTx);
 		skin.add("locked", ResourseManager.getInstance().lockedTx);
@@ -96,8 +99,20 @@ public class SelectLevel implements Screen {
 		
 		container = new Table();
 		stage.addActor(container);
-		stage.addActor(ctrlPanel);
+		stage.addActor(ctrlStart);
+		stage.addActor(ctrlBack);
 		stage.addActor(score);
+		stage.addListener(new ClickListener(){
+		    	@Override
+		    	public boolean keyDown(InputEvent event, int keycode) {
+		    		if (keycode == Keys.BACK) {
+		    			System.out.println("Back pressed!");
+		    			dispose();
+		    			ResourseManager.getInstance().dispose();
+		    		}
+		    		return true;
+		    	}
+		    });
 		
 		container.setFillParent(true);
 		PagedScrollPane scroll = new PagedScrollPane();
@@ -129,11 +144,11 @@ public class SelectLevel implements Screen {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		Skin skin = ResourseManager.getInstance().skin;
 		stage.act(Gdx.graphics.getDeltaTime());
-		batch.begin();
-		bgSp.draw(batch);
-	//	font.draw(batch, String.valueOf(getScore(checkedLvl)), 0.3f*w, 0.2f*h);
-		batch.end();
+		ResourseManager.getInstance().batch.begin();
+		bgSp.draw(ResourseManager.getInstance().batch);
+		ResourseManager.getInstance().batch.end();
 		stage.draw();
 	}
 
@@ -144,7 +159,6 @@ public class SelectLevel implements Screen {
 
 	public void dispose () {
 		stage.dispose();
-		skin.dispose();
 		
 	}
 
@@ -160,15 +174,18 @@ public class SelectLevel implements Screen {
 	 * @return The button to use for the level
 	 */
 	public Button getLevelButton(int level) {
+		Skin skin = ResourseManager.getInstance().skin;
 		Button button = new Button(skin);
 		ButtonStyle style = button.getStyle();
 		style.up = 	style.down =null;
 	
 		// Create the label to show the level number
-	//	Label label = new Label(Integer.toString(level), skin);
+		LabelStyle labelStyle=new LabelStyle(ResourseManager.getInstance().fontSc, Color.WHITE);
+		
 		Label label = new Label(String.valueOf(level), skin);
 		label.setFontScale(0.3f);
 		label.setAlignment(Align.center);
+		label.setStyle(labelStyle);
 		
 		// Stack the image and the label at the top of our button
 		Image img=new Image(skin.getDrawable("tile"));
@@ -222,17 +239,24 @@ public class SelectLevel implements Screen {
 	public ClickListener buttonClickListener = new ClickListener() {
 		@Override
 		public void clicked (InputEvent event, float x, float y) {
-			if(x>=100 && y>=60 && y<=210) { 
-				//start
-				if(checkedLvl<=unlockedLvl) {	
-		    				rootGame.setLevel(checkedLvl);
-		    	    		dispose();
-		    	    		rootGame.setScreen(rootGame.gameScreen);
-		    			}
-			} else if(x<=110 && y<=80 ){ 
-				//menu
-	    	    		dispose();
-	    	    		rootGame.setScreen(rootGame.menuScreen);
+			if(event.getListenerActor().getName()=="start") { 
+				if(checkedLvl<=unlockedLvl && checkedLvl>-1) {		
+		    				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+		    					public void run () {
+		    						rootGame.setLevel(checkedLvl);
+                                	dispose();
+        		    	    		rootGame.setScreen(rootGame.gameScreen);
+		    					}
+		    				})));
+                                	
+                            }
+		    	    		
+		} else if(event.getListenerActor().getName()=="back"){ 
+			ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+				public void run () {
+					dispose();
+    	    		rootGame.setScreen(rootGame.menuScreen);
+				}})));    		
 			}
 		}
 	};
@@ -265,16 +289,23 @@ public int getScore(int level) {
 		return stars;
 	}
 
+	
+	private Color toRGB(int r, int g, int b) {
+        float RED = r / 255.0f;
+        float GREEN = g / 255.0f;
+        float BLUE = b / 255.0f;
+        return new Color(RED, GREEN, BLUE, 1);
+}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Hide Sel.!");
 	}
 
 
 	@Override
 	public void pause() {
+		System.out.println("PAUSE! Sel");
 		// TODO Auto-generated method stub
 		
 	}

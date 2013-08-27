@@ -6,22 +6,17 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Json;
@@ -30,15 +25,15 @@ import com.me.snake.RootGame;
 
 public class GameOver implements Screen, InputProcessor {
 	private OrthographicCamera camera;
-	private Image ctrlPanel, nextLvl;
+	private Image nextLvl;
 	private Sprite background, recordSp;
 	private int score,record;
 	private float w,h;
 	private RootGame rootGame;
+	private Image ctrlStart, ctrlBack;
 	private String message;
 	BufferedWriter out = null;
 	private Stage stage;
-	private Actor actor;
 	private int level, unlockedLvl;
 	private ArrayList scoresArr;
 	
@@ -95,9 +90,8 @@ public class GameOver implements Screen, InputProcessor {
 		
 		camera = new OrthographicCamera(320, 480);
 		stage = new Stage(0, 0, true);
-		actor = new Actor();
-		//stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
-	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
+		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 		
@@ -110,10 +104,20 @@ public class GameOver implements Screen, InputProcessor {
 		recordSp.setPosition(0.7f*w, 0.72f*h);
 		recordSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
 		
-		ctrlPanel=new Image(ResourseManager.getInstance().controlPanelTx);
-		ctrlPanel.setPosition(0.495f*w, 0);
-		ctrlPanel.setSize(0.5f*512*w/480, 0.45f*512*h/320);
-		ctrlPanel.addListener(buttonClickListener);
+		ResourseManager.getInstance().font.setScale(0.6f*w/480,0.6f*h/320);
+		
+		ctrlStart=new Image(ResourseManager.getInstance().ctrlStart);
+		ctrlStart.setSize(0.5f*256*w/480, 0.5f*256*h/320);
+		ctrlStart.setPosition(0.73f*w, 0.15f*h);
+		ctrlStart.setName("start");
+		ctrlStart.addListener(buttonClickListener);
+		
+		
+		ctrlBack=new Image(ResourseManager.getInstance().ctrlBack);
+		ctrlBack.setSize(0.53f*256*w/480, 0.53f*256*h/320);
+		ctrlBack.setPosition(0.5f*w, -0.225f*h);
+		ctrlBack.setName("back");
+		ctrlBack.addListener(buttonClickListener);
 		
 		nextLvl=new Image(ResourseManager.getInstance().nextLvlTx);
 		nextLvl.setName("nextLvl");
@@ -123,9 +127,22 @@ public class GameOver implements Screen, InputProcessor {
 		
 		setRecord();
 		if(message=="Nice!Level completed") nextLvl.setVisible(true); else  nextLvl.setVisible(false);
-
-		stage.addActor(ctrlPanel);
+		
 		stage.addActor(nextLvl);
+		stage.addActor(ctrlStart);
+		stage.addActor(ctrlBack);
+		stage.addListener(new ClickListener(){
+		    	@Override
+		    	public boolean keyDown(InputEvent event, int keycode) {
+		    		if (keycode == Keys.BACK) {
+		    			System.out.println("Back pressed!");
+		    			dispose();
+		    			ResourseManager.getInstance().dispose();
+		    		}
+		    		return true;
+		    	}
+		    });
+		
 		 Gdx.input.setInputProcessor(stage);
 	}
 	
@@ -156,6 +173,7 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void dispose() {
+		System.out.println("GameOver dispose!");
 		stage.dispose();
 	}
 	
@@ -163,27 +181,52 @@ public class GameOver implements Screen, InputProcessor {
 	public ClickListener buttonClickListener = new ClickListener() {
 		@Override
 		public void clicked (InputEvent event, float x, float y) {
-			if(x>=100 && y>=60 && y<=210) {
+			if(event.getListenerActor().getName()=="start") {
 				//start
-		    			rootGame.setLevel(level);
+				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+					public void run () {
+						rootGame.setLevel(level);
 	    	    		dispose();
 	    	    		rootGame.setScreen(rootGame.gameScreen);
+					}})));    	
+		    			
 				}
-			 if(x<=110 && y<=80 ){
+			 if(event.getListenerActor().getName()=="back"){
 				 //Menu
-		    	    		dispose();
+				 ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+						public void run () {
+							dispose();
 		    	    		rootGame.setScreen(rootGame.menuScreen);
+						}})));    	
+		    	    		
 		    			}
 				 
 				 if(event.getListenerActor().getName()=="nextLvl") {
-					 
-			    				rootGame.setLevel(level+1);
+					 nextLvl.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+							public void run () {
+								rootGame.setLevel(level+1);
 			    	    		rootGame.setScreen(rootGame.gameScreen);
+							}}))); 
+			    				
 			    			}
 				 }
 	};
 
 	
+	
+	private Color toRGB(int r, int g, int b) {
+        float RED = r / 255.0f;
+        float GREEN = g / 255.0f;
+        float BLUE = b / 255.0f;
+        return new Color(RED, GREEN, BLUE, 1);
+}
+	
+	@Override
+	public void hide() {
+		System.out.println("hide! GameOv");
+	//	ResourseManager.getInstance().dispose();
+	}
+
 	
 	@Override
 	public boolean keyDown(int keycode) {
@@ -234,14 +277,10 @@ public class GameOver implements Screen, InputProcessor {
 	}
 
 
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public void pause() {
+		System.out.println("PAUSE!GameOv");
 		// TODO Auto-generated method stub
 		
 	}

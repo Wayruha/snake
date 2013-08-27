@@ -12,18 +12,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.me.snake.PickedUpPos;
 import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
@@ -32,8 +32,9 @@ import com.me.snake.SnakePart;
 public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private Actor actor;
-	private Sprite snakeEat, bgSp,pauseSp, bigPause, mob, exitSp, controlSp, visibleApple;
-	private Image controlUp,controlDown, controlLeft, controlRight;
+	private Stage stage;
+	private Sprite snakeEat, bgSp, mob, visibleApple;
+    private Image ctrlUp,ctrlDown, ctrlLeft, ctrlRight ,pause, exit, bigPause;
 	public static float SQUARE_WIDTH, SQUARE_HEIGHT;
 	int pixCountWid = 20, pixCountHei = 14, eatArrX, eatArrY, wayOld,
 			wayNew;
@@ -49,7 +50,6 @@ public class GameScreen implements Screen, InputProcessor {
 	private  char[] charArray;
 	private float speed, accelerate, mobSpeed=0.5f;
 	private RootGame rootGame;
-	private BitmapFont font, fontDone;
 	float w = Gdx.graphics.getWidth();
 	float h = Gdx.graphics.getHeight();
 	private int level;
@@ -64,26 +64,19 @@ public class GameScreen implements Screen, InputProcessor {
 		this.rootGame = rootGame;
 	}
 	
-	
-	@Override
-	public void resize(int width, int height) {
-
-	}
-
-
-
 	@Override
 	public void show() {
 		SQUARE_WIDTH = w / pixCountWid; // задаємо ш\в клітинки
 		SQUARE_HEIGHT = h / pixCountHei;
-		//stage=new Stage(0,0,true);
+		stage=new Stage(0,0,false);
+		System.out.println("W: "+ SQUARE_WIDTH+ " H : "+ SQUARE_HEIGHT);
 		//stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
-		//stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		ifAccelerate=false;
 		speed=0.5f;
 		accelerate=0.04f;
 		level=rootGame.getLevel();
-		i=0;
+		i=-1;
 		score=0;
 		alpha=0f;
 		appleAlpha=0f;
@@ -101,7 +94,6 @@ public class GameScreen implements Screen, InputProcessor {
 		wallsSp=new ArrayList<Sprite>();
 		wayNew=3;
 		wayOld=3;
-				
 			
 		camera = new OrthographicCamera(320, 480);
 		
@@ -111,22 +103,42 @@ public class GameScreen implements Screen, InputProcessor {
 		headPart = new SnakePart(pixCountWid / 2, pixCountHei / 2, "head");
 		parts.add(headPart);
 		
-		controlSp=new Sprite(ResourseManager.getInstance().controlBut);
-		controlSp.setSize(0.1f*128*w/480, 2f*128*h/320);
+		pause=new Image(ResourseManager.getInstance().pauseTx);
+		pause.setSize(0.15f*w, 0.23f*h);
+		pause.setPosition(-2, 12.5f*SQUARE_HEIGHT);
+		pause.setColor(1,1,1,0.8f);
+		pause.addListener(new ClickListener() {
+	    	@Override
+	    	public void clicked(InputEvent event, float x, float y) {
+	    	    		ifPause=true;
+	    	    		bigPause.setVisible(true);
+	    	}
+		});
 		
-		drawCtrlBut();
-		
-		pauseSp=new Sprite(ResourseManager.getInstance().pauseTx);
-		pauseSp.setSize(0.1f*w, 0.15f*h);
-		pauseSp.setPosition(0, 13*SQUARE_HEIGHT);
-		
-		bigPause=new Sprite(ResourseManager.getInstance().pauseTx);
-		bigPause.setSize(0.5f*w, 0.6f*h);
-		bigPause.setPosition(0.27f*w, 0.38f*h);
+		bigPause=new Image(ResourseManager.getInstance().pauseTx);
+		bigPause.setSize(0.9f*w, 1f*h);
+		bigPause.setPosition(0.18f*w, 0.3f*h);
+		bigPause.setColor(1, 1, 1, 0.5f);
+		bigPause.addListener(new ClickListener() {
+	    	@Override
+	    	public void clicked(InputEvent event, float x, float y) {
+	    	    		ifPause=false;
+	    	    		bigPause.setVisible(false);
+	    	}
+		});
+		bigPause.setVisible(false);
 	
-		exitSp=new Sprite(ResourseManager.getInstance().exitTx);
-		exitSp.setSize(0.1f*w, 0.15f*h);
-		exitSp.setPosition(18*SQUARE_WIDTH, 13*SQUARE_HEIGHT);
+		exit=new Image(ResourseManager.getInstance().exitTx);
+		exit.setSize(0.15f*w, 0.23f*h);
+		exit.setPosition(18*SQUARE_WIDTH, 12.5f*SQUARE_HEIGHT);
+		exit.setColor(1,1,1,0.8f);
+		exit.addListener(new ClickListener() {
+	    	@Override
+	    	public void clicked(InputEvent event, float x, float y) {
+	    		dispose();
+				rootGame.setScreen(rootGame.menuScreen);
+	    	}
+		});
 		
 		snakeEat = new Sprite(ResourseManager.getInstance().eatTx);
 		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
@@ -134,39 +146,72 @@ public class GameScreen implements Screen, InputProcessor {
 		visibleApple=new Sprite(ResourseManager.getInstance().eatTx);
 		visibleApple.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		font = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontScTx), false);
-		font.setScale(0.35f);
-		
-		fontDone = new BitmapFont(Gdx.files.internal("data/font/neucha.fnt"), new TextureRegion(ResourseManager.getInstance().fontScTx), false);
-		fontDone.setScale(0.5f);
-		
 		mob=new Sprite(ResourseManager.getInstance().borderTx);
 		mob.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
+		ResourseManager.getInstance().font.setScale(0.35f);
 		readArr();
 		mobMove();
-		
 		drawWalls();
 		
-		Gdx.input.setInputProcessor(this);
+		Gdx.input.setInputProcessor(stage);
 		pickUp();
+		drawCtrlBut();
+		stage.addActor(pause);
+		stage.addActor(bigPause);
+		stage.addActor(exit);
+		stage.addListener(new ClickListener(){
+		    	@Override
+		    	public boolean keyDown(InputEvent event, int keycode) {
+		    		if (keycode == Keys.BACK) {
+		    			System.out.println("Back pressed!");
+		    			dispose();
+		    			ResourseManager.getInstance().dispose();
+		    		}
+		    		return true;
+		    	}
+		    });
 	}
 
 	
 	private void drawCtrlBut(){
-		controlUp=new Image(ResourseManager.getInstance().controlBut);
-		controlUp.rotate(270);
-		controlUp.setName("ctrlUp");
-		controlUp.setPosition(-2, 7*SQUARE_HEIGHT);
+		ctrlUp=new Image(ResourseManager.getInstance().controlBut);
+		ctrlUp.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
+		ctrlUp.setRotation(90);
+		ctrlUp.setName("ctrlUp");
+		ctrlUp.setSize(0.5f*128*w/480, 0.4f*128*h/320);
+		ctrlUp.setPosition(19*SQUARE_WIDTH+8, 7*SQUARE_HEIGHT);
+		ctrlUp.setColor(1, 1, 1, 0.8f);
+		ctrlUp.addListener(ctrlClickListener);
+		stage.addActor(ctrlUp);
 		
-		controlUp=new Image(ResourseManager.getInstance().controlBut);
-		controlUp.rotate(90);
-		controlUp.setName("ctrlDown");
-		controlUp=new Image(ResourseManager.getInstance().controlBut);
-		controlUp.rotate(180);
-		controlUp.setName("ctrlLeft");
-		controlUp=new Image(ResourseManager.getInstance().controlBut);
-		controlUp.setName("ctrlRight");
+		ctrlLeft=new Image(ResourseManager.getInstance().controlBut);
+		ctrlLeft.setName("ctrlLeft");
+		ctrlLeft.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
+		ctrlLeft.rotate(180);
+		ctrlLeft.setPosition(3*SQUARE_WIDTH, 20);
+		ctrlLeft.setSize(0.5f*128*w/480, 0.4f*128*h/320);
+		ctrlLeft.setColor(1, 1, 1, 0.8f);
+		ctrlLeft.addListener(ctrlClickListener);
+		stage.addActor(ctrlLeft);
+		
+		ctrlRight=new Image(ResourseManager.getInstance().controlBut);
+		ctrlRight.setName("ctrlRight");
+		ctrlRight.setSize(0.5f*128*w/480, 0.4f*128*h/320);
+		ctrlRight.setPosition(5*SQUARE_WIDTH, -5);
+		ctrlRight.setColor(1, 1, 1, 0.8f);
+		ctrlRight.addListener(ctrlClickListener);
+		stage.addActor(ctrlRight);
+	
+		ctrlDown=new Image(ResourseManager.getInstance().controlBut);
+		ctrlDown.setName("ctrlDown");
+		ctrlDown.setRotation(270);
+		ctrlDown.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
+		ctrlDown.setSize(0.5f*128*w/480, 0.4f*128*h/320);
+		ctrlDown.setPosition(19*SQUARE_WIDTH-18, 5*SQUARE_HEIGHT);
+		ctrlDown.setColor(1, 1, 1, 0.8f);
+		ctrlDown.addListener(ctrlClickListener);
+		stage.addActor(ctrlDown);
 	
 	}
 	
@@ -193,8 +238,8 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 			mobsWay.add(bytes);
 		}
-		return true;
-      }
+		return true; //Тру якшо моб є в цьому лвлі
+      } else 
 		return false;
 	}
 
@@ -233,15 +278,19 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private void mobMove(){
 		if(readArr()){
+		i++;
 		if( i>=mobsWay.size()) i=0;
 		mob.setPosition(mobsWay.get(i).get(0) *SQUARE_WIDTH, mobsWay.get(i).get(1)*SQUARE_HEIGHT);
 		if(map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)]==1) {
-			 ///Програвв
+			System.out.println("Mob Hit");
+			 ///Програв
 			dispose();
-			rootGame.gameOver.setScore(parts.size());
+			rootGame.gameOver.setScore(score);
 			rootGame.setScreen(rootGame.gameOver);
 		}
-	    i++;
+		System.out.println("x: "+ mob.getX()+ " y : "+ mob.getY());
+		
+	   
 	}
 	}
 	
@@ -250,11 +299,10 @@ public class GameScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
+		stage.act(delta);
 		if(ifPause== false) {
 			step(delta);
 		}
-		
 		ResourseManager.getInstance().batch.begin();
 		
 		bgSp.draw(ResourseManager.getInstance().batch);
@@ -265,17 +313,12 @@ public class GameScreen implements Screen, InputProcessor {
 		completedLvlText(delta);
 		snakeEat.draw(ResourseManager.getInstance().batch);
 		ateApple();
-		pauseSp.draw(ResourseManager.getInstance().batch);
-		exitSp.draw(ResourseManager.getInstance().batch);
-		ctrlButDraw();
-		font.draw(ResourseManager.getInstance().batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
+		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
+		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"FPS "+ Gdx.graphics.getFramesPerSecond(), 13*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
 		mob.draw(ResourseManager.getInstance().batch);
-		if(ifPause==true) {
-			bigPause.draw(ResourseManager.getInstance().batch, 0.6f);
-		}
-		
 		ResourseManager.getInstance().batch.end();
-
+		
+		stage.draw();
 	}
 	
 	public void move() {
@@ -291,8 +334,9 @@ public class GameScreen implements Screen, InputProcessor {
 					}
 					
 		turnHead(wayNew);
-
+		System.out.println("HD: MapX: "+ headPart.getMapX()+" MapY: "+ headPart.getMapY());
 		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
+			System.out.println("Head hit");
 		 ///Програв
 			dispose();
 			rootGame.gameOver.setScore(score);
@@ -324,6 +368,25 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 	}
 	
+	public ClickListener ctrlClickListener = new ClickListener() {
+		@Override
+		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+			event.getListenerActor().addAction(Actions.color(new Color(toRGB(2,1,1,0.8f))));
+			if(event.getListenerActor().getName()== "ctrlUp")	 wayNew = 2;
+			if(event.getListenerActor().getName()== "ctrlLeft")  wayNew=1;
+			if(event.getListenerActor().getName()== "ctrlRight") wayNew=3;
+			if(event.getListenerActor().getName()== "ctrlDown") wayNew=4;
+			return true;
+		};
+		
+		public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+			event.getListenerActor().addAction(Actions.color(toRGB(204,255,255,0.8f)));
+		};
+		
+	};
+		
+
+	
 	@Override
 	public  boolean touchDown(int screenX, int screenY, int pointer, int button) {
 	//  system.out.println("x: " + screenX/SQUARE_WIDTH + ";  Y: "+screenY/SQUARE_HEIGHT);
@@ -338,17 +401,15 @@ public class GameScreen implements Screen, InputProcessor {
 			rootGame.setScreen(rootGame.menuScreen);
 		}
 		if(ifPause==true) if(screenX<0.8f*w && screenX>0.3f*w && screenY>0.2f*h && screenY<0.6f*h) ifPause=false;
-		return false;
+		System.out.println("key pressed");
+		return true;
 	}
 	
 	
 
 	@Override
 	public void dispose() {
-		font.dispose();
-		fontDone.dispose();
-		//ResourseManager.getInstance().dispose();
-		
+		stage.dispose();
 	}
 
 	private void step(float delta){
@@ -363,16 +424,18 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 		time +=delta;
 		mobsTime+=delta;
-		if(mobsTime>mobSpeed){
-			mobMove();
-			mobsTime=0;
-		}
 		
 		if (time > speed) {
 			move(); //крок	
 			if (parts.get(0).getMapX() == eatArrX && parts.get(0).getMapY() == eatArrY) {
 			pickUp(); //з`їли
-		}	
+		}		
+		if(mobsTime>mobSpeed){
+			mobMove();
+			mobsTime=0;
+		}
+		
+		
 		
 		//Розмноження
 		for (Iterator<PickedUpPos> it=pickedUp.iterator(); it.hasNext();) {
@@ -408,10 +471,10 @@ public class GameScreen implements Screen, InputProcessor {
 		if(score>=RootGame.NEED_POINTS && level!=0) {
 			timeAfterShowCompleted+=delta;
 			if(timeAfterShowCompleted<6.3f) {
-				if(alpha<1 && !visible) fontDone.setColor(1, 1, 1, alpha+=0.005f);
+				if(alpha<1 && !visible) ResourseManager.getInstance().fontDone.setColor(1, 1, 1, alpha+=0.005f);
 				if(alpha>1) visible=true;
-				if (visible && alpha>=0) fontDone.setColor(1, 1, 1, alpha-=0.005f);
-				fontDone.draw(ResourseManager.getInstance().batch, "Level completed!", 6*SQUARE_WIDTH, 8*SQUARE_HEIGHT);
+				if (visible && alpha>=0) ResourseManager.getInstance().fontDone.setColor(1, 1, 1, alpha-=0.005f);
+				ResourseManager.getInstance().fontDone.draw(ResourseManager.getInstance().batch, "Level completed!", 6*SQUARE_WIDTH, 8*SQUARE_HEIGHT);
 			}
 		}
 	}
@@ -422,14 +485,6 @@ public class GameScreen implements Screen, InputProcessor {
 			visibleApple.draw(ResourseManager.getInstance().batch, appleAlpha-=0.048f);
 		}
 	}
-	
-	private void ctrlButDraw(){
-		ResourseManager.getInstance().batch.draw(controlSp, -2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.5f, 2.1f, 180, true);
-		ResourseManager.getInstance().batch.draw(controlSp, 4*SQUARE_WIDTH, -4, SQUARE_WIDTH/2, SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 270, true);
-		ResourseManager.getInstance().batch.draw(controlSp, 15*SQUARE_WIDTH-5, 1, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 90, true);
-		ResourseManager.getInstance().batch.draw(controlSp, 19*SQUARE_WIDTH+2, 7*SQUARE_HEIGHT, SQUARE_WIDTH/2,SQUARE_HEIGHT/2, SQUARE_WIDTH,SQUARE_HEIGHT, 1.6f, 2.2f, 0, true);
-	}
-	
 	
 	private void turnHead(int wayNew){
 		headPart.getSp().setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
@@ -468,9 +523,20 @@ break;
 }
 	}
 	
+	@Override
+	public void hide() {
+		System.out.println("Hide!Game");
+		//ResourseManager.getInstance().dispose();
+	}
+	
+	@Override
+	public void resize(int width, int height) {
+		stage.setViewport(width, height, true);
+		}
 	
 	@Override
 	public void pause() {
+		System.out.println("PAUSE!");
 	}
 
 	@Override
@@ -497,6 +563,12 @@ break;
 		return false;
 	}
 
+	private Color toRGB(int r, int g, int b, float alpha) {
+        float RED = r / 255.0f;
+        float GREEN = g / 255.0f;
+        float BLUE = b / 255.0f;
+        return new Color(RED, GREEN, BLUE, alpha);
+}
 	
 	@Override
 	public boolean keyUp(int keycode) {
@@ -535,10 +607,4 @@ break;
 		return false;
 	}
 
-	
-	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-		
-	}
 }

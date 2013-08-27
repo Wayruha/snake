@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.me.snake.screens.GameOver;
 import com.me.snake.screens.GameScreen;
 import com.me.snake.screens.MenuScreen;
-import com.me.snake.screens.Scores;
 import com.me.snake.screens.SelectLevel;
 
 public class RootGame extends Game {
@@ -12,7 +11,7 @@ public class RootGame extends Game {
 	public MenuScreen menuScreen;
 	public GameOver gameOver;
 	public SelectLevel selectLevel;
-	public static final int NEED_POINTS = 20;
+	public static final int NEED_POINTS = 15;
 	private int level;
 
 	public int getLevel() {
@@ -25,13 +24,12 @@ public class RootGame extends Game {
 
 	@Override
 	public void create() {
-		 ResourseManager.getInstance(); // йде як конструктор, див Singleton
-		gameScreen = new GameScreen(this);
+		new ResourseManager();  
 		menuScreen = new MenuScreen(this);
 		gameOver = new GameOver(this);
 		selectLevel = new SelectLevel(this);
-
-		setScreen(selectLevel);
+		gameScreen=new GameScreen(this);
+		setScreen(menuScreen);
 	}
 
 }

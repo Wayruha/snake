@@ -4,18 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -28,12 +24,10 @@ import com.badlogic.gdx.utils.Json;
 import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
 
-public class MenuScreen implements Screen, InputProcessor {
+public class MenuScreen implements Screen {
 
 	private Sprite background, snMenuSp,starSp;
 	private RootGame rootGame;
-	private SpriteBatch batch;
-	private SelectLevel   selectLevel;
 	private OrthographicCamera camera;
 	private float w = Gdx.graphics.getWidth();
 	private float h = Gdx.graphics.getHeight();
@@ -44,7 +38,7 @@ public class MenuScreen implements Screen, InputProcessor {
 	private TextButton fastGame;
 	private ArrayList scoresArr;
 	private String bestScore;
-
+	private Texture backgroundTx;
 
 	public MenuScreen(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -52,17 +46,18 @@ public class MenuScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
+		System.out.println("show Menu!");
+		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
-		batch=new SpriteBatch();
 		
 		stage = new Stage(0, 0, true);
 	    table = new Table();
 		actor = new Actor();
-		table.add(actor);
-	//	stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
-	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
+		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		ResourseManager.getInstance().fontSc.setScale(0.35f * w / 480, 0.35f * h / 320);
 		
 		Json json = new Json();
 		FileHandle handle = Gdx.files.local("scores.txt");
@@ -84,7 +79,11 @@ public class MenuScreen implements Screen, InputProcessor {
 
 		camera = new OrthographicCamera(320, 480);
 		
-		background = new Sprite(ResourseManager.getInstance().background);
+		//backgroundTx = new Texture(Gdx.files.internal("data/bg.png"));
+		//backgroundTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		
+		background = new Sprite(ResourseManager.getInstance().backgroundTx);
 		background.setSize(w, h);
 		background.setPosition(0,0);		
 		
@@ -112,7 +111,6 @@ public class MenuScreen implements Screen, InputProcessor {
 	    				rootGame.setLevel(0);
 	    	    		dispose();
 	    	    		rootGame.setScreen(rootGame.gameScreen);
-	  
 	    		
 	    	}
 		});
@@ -129,6 +127,17 @@ public class MenuScreen implements Screen, InputProcessor {
 		});
 	    stage.addActor(fastGame);
 	    stage.addActor(selectLevelButt);
+	    stage.addListener(new ClickListener(){
+	    	@Override
+	    	public boolean keyDown(InputEvent event, int keycode) {
+	    		if (keycode == Keys.BACK) {
+	    			System.out.println("Back pressed!");
+	    			dispose();
+	    			ResourseManager.getInstance().dispose();
+	    		}
+	    		return true;
+	    	}
+	    });
 		Gdx.input.setInputProcessor(stage);
 	} 
 	
@@ -142,21 +151,21 @@ public class MenuScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-	
-		background.draw(batch);
-		snMenuSp.draw(batch);
-		starSp.draw(batch);
-		ResourseManager.getInstance().fontSc.draw(batch,bestScore, 0.79f*w,0.86f*h);
-		batch.end();
+		ResourseManager.getInstance().batch.begin();
+		background.draw(ResourseManager.getInstance().batch);
+		snMenuSp.draw(ResourseManager.getInstance().batch);
+		starSp.draw(ResourseManager.getInstance().batch);
+		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch,bestScore, 0.79f*w,0.86f*h);
+		ResourseManager.getInstance().batch.end();
 		stage.act(delta);
 		stage.draw();
 		}
 
 	@Override
 	public void dispose() {
+		System.out.println("DISPOSE!");
 		stage.dispose();
-
+		
 	}
 
 	private Color toRGB(int r, int g, int b) {
@@ -166,71 +175,21 @@ public class MenuScreen implements Screen, InputProcessor {
         return new Color(RED, GREEN, BLUE, 1);
 }
 	
+	
 	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return true;
-
+	public void resume() {
+		System.out.println("RESUME!");
 	}
-
-	@Override
-	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+	
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
+		System.out.println("HIDE!Menu");
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-
+		
 	}
-
-	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-
-	}
-
-	
 }
+

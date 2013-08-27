@@ -12,6 +12,7 @@ public class Main {
 		cfg.useGL20 = false;
 		cfg.width = 480;
 		cfg.height = 320;
+		cfg.vSyncEnabled = true;
 		
 		new LwjglApplication(new RootGame(), cfg);
 	}
