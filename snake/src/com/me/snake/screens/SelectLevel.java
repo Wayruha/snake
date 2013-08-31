@@ -39,8 +39,10 @@ public class SelectLevel implements Screen {
 	private int checkedLvl;
 	private ArrayList<Button> buttonArr;
 	private Label score;
-	private Image ctrlStart;
-	private Image ctrlBack;
+	private Image ctrlStart, ctrlBack;
+	private boolean ifSound;
+	private LabelStyle labelStyle;
+	private Skin skin;
 
 	public SelectLevel(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -50,14 +52,15 @@ public class SelectLevel implements Screen {
 
 	@Override
 	public void show() {
-		
 		stage=new Stage(0,0, false);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		ResourseManager.getInstance().fontSc.setScale(1);
+		labelStyle=new LabelStyle(ResourseManager.getInstance().fontSc, Color.WHITE);
 		 //ResourseManager.getInstance();
 		 w = Gdx.graphics.getWidth();
 		 h = Gdx.graphics.getHeight();
+		 ifSound=rootGame.ifSound();
 		 getScore(0);
 		 unlockedLvl=((Float) scoresArr.get(scoresArr.size()-1)).intValue();
 		 buttonArr=new ArrayList<Button>();
@@ -85,7 +88,7 @@ public class SelectLevel implements Screen {
 		
 		Gdx.input.setInputProcessor(stage);
 	
-		Skin skin = ResourseManager.getInstance().skin;
+		skin = ResourseManager.getInstance().skin;
 		skin.add("font", ResourseManager.getInstance().fontSc);
 		skin.add("star", ResourseManager.getInstance().starTx);
 		skin.add("tile", ResourseManager.getInstance().tileTx);
@@ -95,6 +98,7 @@ public class SelectLevel implements Screen {
 		score = new Label("",skin);
 		score.setFontScale(0.3f);
 		score.setPosition(0.8f*w, 0.1f*h);
+		score.setStyle(labelStyle);
 		
 		
 		container = new Table();
@@ -106,7 +110,6 @@ public class SelectLevel implements Screen {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			System.out.println("Back pressed!");
 		    			dispose();
 		    			ResourseManager.getInstance().dispose();
 		    		}
@@ -159,7 +162,7 @@ public class SelectLevel implements Screen {
 
 	public void dispose () {
 		stage.dispose();
-		
+		skin.dispose();
 	}
 
 	public boolean needsGL20 () {
@@ -180,7 +183,6 @@ public class SelectLevel implements Screen {
 		style.up = 	style.down =null;
 	
 		// Create the label to show the level number
-		LabelStyle labelStyle=new LabelStyle(ResourseManager.getInstance().fontSc, Color.WHITE);
 		
 		Label label = new Label(String.valueOf(level), skin);
 		label.setFontScale(0.3f);
@@ -230,7 +232,6 @@ public class SelectLevel implements Screen {
 				checkedLvl=Integer.parseInt(event.getListenerActor().getName());
 				event.getListenerActor().setColor(1, 1, 1, 0.6f);
 				score.setText(String.valueOf(getScore(checkedLvl)));
-				//score.setAlignment(Align.center);
 			}
 			
 		}
@@ -240,7 +241,8 @@ public class SelectLevel implements Screen {
 		@Override
 		public void clicked (InputEvent event, float x, float y) {
 			if(event.getListenerActor().getName()=="start") { 
-				if(checkedLvl<=unlockedLvl && checkedLvl>-1) {		
+				if(checkedLvl<=unlockedLvl && checkedLvl>-1) {
+					if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
 		    				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
 		    					public void run () {
 		    						rootGame.setLevel(checkedLvl);
@@ -252,6 +254,7 @@ public class SelectLevel implements Screen {
                             }
 		    	    		
 		} else if(event.getListenerActor().getName()=="back"){ 
+			if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
 			ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
 				public void run () {
 					dispose();
@@ -299,13 +302,11 @@ public int getScore(int level) {
 
 	@Override
 	public void hide() {
-		System.out.println("Hide Sel.!");
 	}
 
 
 	@Override
 	public void pause() {
-		System.out.println("PAUSE! Sel");
 		// TODO Auto-generated method stub
 		
 	}

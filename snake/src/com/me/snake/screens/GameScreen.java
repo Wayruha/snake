@@ -58,7 +58,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private int i;
 	private float alpha, appleAlpha;
 	private float timeAfterShowCompleted;
-	private boolean visible;
+	private boolean visible, ifSound;
 	
 	public GameScreen(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -76,13 +76,14 @@ public class GameScreen implements Screen, InputProcessor {
 		speed=0.5f;
 		accelerate=0.04f;
 		level=rootGame.getLevel();
-		i=-1;
+		i=0;
 		score=0;
 		alpha=0f;
 		appleAlpha=0f;
 		timeAfterShowCompleted=0;
 		visible=false;
 		ifPause=false;
+		ifSound=rootGame.ifSound();
 		for (int i = 0; i < pixCountWid; i++) {
 			for (int j = 0; j < pixCountHei; j++) {
 				map[i][j] = 0;
@@ -110,6 +111,7 @@ public class GameScreen implements Screen, InputProcessor {
 		pause.addListener(new ClickListener() {
 	    	@Override
 	    	public void clicked(InputEvent event, float x, float y) {
+	    				if(ifSound) ResourseManager.getInstance().buttonSound.play(1f);
 	    	    		ifPause=true;
 	    	    		bigPause.setVisible(true);
 	    	}
@@ -135,6 +137,7 @@ public class GameScreen implements Screen, InputProcessor {
 		exit.addListener(new ClickListener() {
 	    	@Override
 	    	public void clicked(InputEvent event, float x, float y) {
+	    		if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
 	    		dispose();
 				rootGame.setScreen(rootGame.menuScreen);
 	    	}
@@ -164,7 +167,6 @@ public class GameScreen implements Screen, InputProcessor {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			System.out.println("Back pressed!");
 		    			dispose();
 		    			ResourseManager.getInstance().dispose();
 		    		}
@@ -249,6 +251,7 @@ public class GameScreen implements Screen, InputProcessor {
 		{
 			visibleApple.setPosition(snakeEat.getX(), snakeEat.getY());
 			appleAlpha=1f;
+			ResourseManager.getInstance().pickUpSound.play(1f);
 		}
 		boolean goodPos = false;
 		int randX;
@@ -278,17 +281,18 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private void mobMove(){
 		if(readArr()){
-		i++;
+		
 		if( i>=mobsWay.size()) i=0;
 		mob.setPosition(mobsWay.get(i).get(0) *SQUARE_WIDTH, mobsWay.get(i).get(1)*SQUARE_HEIGHT);
 		if(map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)]==1) {
-			System.out.println("Mob Hit");
+			//System.out.println("Mob Hit");
 			 ///Програв
 			dispose();
 			rootGame.gameOver.setScore(score);
 			rootGame.setScreen(rootGame.gameOver);
 		}
-		System.out.println("x: "+ mob.getX()+ " y : "+ mob.getY());
+		i++;
+		//System.out.println("x: "+ mob.getX()+ " y : "+ mob.getY());
 		
 	   
 	}
@@ -300,7 +304,7 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		stage.act(delta);
-		if(ifPause== false) {
+		if(ifPause==false) {
 			step(delta);
 		}
 		ResourseManager.getInstance().batch.begin();
@@ -330,13 +334,14 @@ public class GameScreen implements Screen, InputProcessor {
 						for (int i=parts.size()-1; i>0; i--) {
 							parts.get(i).setNewPos(parts.get(i - 1).getMapX(), parts.get(i-1).getMapY());
 							map[parts.get(i).getMapX()][parts.get(i).getMapY()]=1;
+							
 						}
 					}
 					
 		turnHead(wayNew);
-		System.out.println("HD: MapX: "+ headPart.getMapX()+" MapY: "+ headPart.getMapY());
+		//System.out.println("HD: MapX: "+ headPart.getMapX()+" MapY: "+ headPart.getMapY());
 		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
-			System.out.println("Head hit");
+			//System.out.println("Head hit");
 		 ///Програв
 			dispose();
 			rootGame.gameOver.setScore(score);
@@ -377,8 +382,7 @@ public class GameScreen implements Screen, InputProcessor {
 			if(event.getListenerActor().getName()== "ctrlRight") wayNew=3;
 			if(event.getListenerActor().getName()== "ctrlDown") wayNew=4;
 			return true;
-		};
-		
+		};	
 		public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 			event.getListenerActor().addAction(Actions.color(toRGB(204,255,255,0.8f)));
 		};
@@ -435,8 +439,6 @@ public class GameScreen implements Screen, InputProcessor {
 			mobsTime=0;
 		}
 		
-		
-		
 		//Розмноження
 		for (Iterator<PickedUpPos> it=pickedUp.iterator(); it.hasNext();) {
 			PickedUpPos pos=it.next();
@@ -467,7 +469,6 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 	
 	private void completedLvlText(float delta){
-		
 		if(score>=RootGame.NEED_POINTS && level!=0) {
 			timeAfterShowCompleted+=delta;
 			if(timeAfterShowCompleted<6.3f) {

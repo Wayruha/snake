@@ -36,6 +36,7 @@ public class GameOver implements Screen, InputProcessor {
 	private Stage stage;
 	private int level, unlockedLvl;
 	private ArrayList scoresArr;
+	private boolean ifSound;
 	
 	public GameOver(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -84,8 +85,8 @@ public class GameOver implements Screen, InputProcessor {
 	public void show() {
 		 w = Gdx.graphics.getWidth();
 		 h = Gdx.graphics.getHeight();
-		
-		level=rootGame.getLevel();
+		 ifSound=rootGame.ifSound();
+	     level=rootGame.getLevel();
  
 		
 		camera = new OrthographicCamera(320, 480);
@@ -135,7 +136,6 @@ public class GameOver implements Screen, InputProcessor {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			System.out.println("Back pressed!");
 		    			dispose();
 		    			ResourseManager.getInstance().dispose();
 		    		}
@@ -173,7 +173,6 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void dispose() {
-		System.out.println("GameOver dispose!");
 		stage.dispose();
 	}
 	
@@ -183,6 +182,7 @@ public class GameOver implements Screen, InputProcessor {
 		public void clicked (InputEvent event, float x, float y) {
 			if(event.getListenerActor().getName()=="start") {
 				//start
+				if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
 				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
 					public void run () {
 						rootGame.setLevel(level);
@@ -193,6 +193,7 @@ public class GameOver implements Screen, InputProcessor {
 				}
 			 if(event.getListenerActor().getName()=="back"){
 				 //Menu
+				 if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
 				 ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
 						public void run () {
 							dispose();
@@ -202,6 +203,7 @@ public class GameOver implements Screen, InputProcessor {
 		    			}
 				 
 				 if(event.getListenerActor().getName()=="nextLvl") {
+					 if(ifSound) ResourseManager.getInstance().buttonSound.play(1f);
 					 nextLvl.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
 							public void run () {
 								rootGame.setLevel(level+1);
@@ -223,7 +225,6 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void hide() {
-		System.out.println("hide! GameOv");
 	//	ResourseManager.getInstance().dispose();
 	}
 
@@ -280,7 +281,6 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void pause() {
-		System.out.println("PAUSE!GameOv");
 		// TODO Auto-generated method stub
 		
 	}

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -32,13 +33,12 @@ public class MenuScreen implements Screen {
 	private float w = Gdx.graphics.getWidth();
 	private float h = Gdx.graphics.getHeight();
 	private Stage stage;
-	private Actor actor;
 	private TextButton selectLevelButt;
-	private Table table;
 	private TextButton fastGame;
 	private ArrayList scoresArr;
 	private String bestScore;
-	private Texture backgroundTx;
+	private Image musicOn, musicOff, soundOn, soundOff;
+	private boolean ifSound=true, ifMusic;
 
 	public MenuScreen(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -46,18 +46,18 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void show() {
-		System.out.println("show Menu!");
-		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		
-		
+		ifSound=rootGame.ifSound();
+		ifMusic=rootGame.ifMusic();
 		stage = new Stage(0, 0, true);
-	    table = new Table();
-		actor = new Actor();
+		camera = new OrthographicCamera(320, 480);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
+		if(ifMusic) ResourseManager.getInstance().bgMusic.play();
+		ResourseManager.getInstance().bgMusic.setLooping(true);
 		ResourseManager.getInstance().fontSc.setScale(0.35f * w / 480, 0.35f * h / 320);
+		
 		
 		Json json = new Json();
 		FileHandle handle = Gdx.files.local("scores.txt");
@@ -77,11 +77,7 @@ public class MenuScreen implements Screen {
 		
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 
-		camera = new OrthographicCamera(320, 480);
-		
-		//backgroundTx = new Texture(Gdx.files.internal("data/bg.png"));
-		//backgroundTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
+
 		
 		background = new Sprite(ResourseManager.getInstance().backgroundTx);
 		background.setSize(w, h);
@@ -97,6 +93,28 @@ public class MenuScreen implements Screen {
 		starSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
 		starSp.setPosition(0.72f*w, 0.62f*h);
 		
+		musicOn=new Image(ResourseManager.getInstance().musicOnTx);
+		musicOn.setSize(0.18f*512*w/480, 0.15f*512*h/320);
+		musicOn.setPosition(0.4f*w, 0.83f*h);
+		musicOn.setName("music_on");
+		musicOn.addListener(musicListener);
+		musicOff=new Image(ResourseManager.getInstance().musicOffTx);
+		musicOff.setSize(0.18f*512*w/480, 0.15f*512*h/320);
+		musicOff.setPosition(0.4f*w, 0.83f*h);
+		musicOff.setName("music_off");
+		musicOff.addListener(musicListener);
+		soundOn=new Image(ResourseManager.getInstance().soundOnTx);
+		soundOn.setSize(0.15f*512*w/480, 0.15f*512*h/320);
+		soundOn.setPosition(0.55f*w, 0.83f*h);
+		soundOn.setName("sound_on");
+		soundOn.addListener(musicListener);
+		soundOff=new Image(ResourseManager.getInstance().soundOffTx);
+		soundOff.setSize(0.15f*512*w/480, 0.15f*512*h/320);
+		soundOff.setPosition(0.55f*w, 0.83f*h);
+		soundOff.setName("sound_off");
+		soundOff.addListener(musicListener);
+		if(rootGame.ifMusic()) musicOff.setVisible(false); else musicOn.setVisible(false);
+		if(rootGame.ifSound()) soundOff.setVisible(false); else soundOn.setVisible(false);
 		
 		buttonStyle.font = ResourseManager.getInstance().font;
 		buttonStyle.font.setScale(0.6f*w/480, 0.6f*h/320);
@@ -108,6 +126,8 @@ public class MenuScreen implements Screen {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
 	    			int pointer, int button) {
+	    				if(ifSound) ResourseManager.getInstance().buttonSound.play(1f);
+	    				rootGame.setIfSound(ifSound);
 	    				rootGame.setLevel(0);
 	    	    		dispose();
 	    	    		rootGame.setScreen(rootGame.gameScreen);
@@ -121,17 +141,22 @@ public class MenuScreen implements Screen {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
 	    			int pointer, int button) {
+	    				if(ifSound) ResourseManager.getInstance().buttonSound.play(1f);
+	    				rootGame.setIfSound(ifSound);
 	    	    		dispose();
 	    	    		rootGame.setScreen(rootGame.selectLevel);
 	    	}
 		});
 	    stage.addActor(fastGame);
 	    stage.addActor(selectLevelButt);
+	    stage.addActor(soundOn);
+	    stage.addActor(soundOff);
+	    stage.addActor(musicOn);
+	    stage.addActor(musicOff);
 	    stage.addListener(new ClickListener(){
 	    	@Override
 	    	public boolean keyDown(InputEvent event, int keycode) {
 	    		if (keycode == Keys.BACK) {
-	    			System.out.println("Back pressed!");
 	    			dispose();
 	    			ResourseManager.getInstance().dispose();
 	    		}
@@ -144,7 +169,6 @@ public class MenuScreen implements Screen {
 
 	public void resize(int width, int height) {
 		stage.setViewport(width, height, true);
-		table.setPosition(stage.getWidth() / 2 - actor.getWidth() / 2, stage.getHeight() / 2 - actor.getHeight() / 2);
 		}
 	
 	@Override
@@ -163,10 +187,20 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		System.out.println("DISPOSE!");
 		stage.dispose();
 		
 	}
+	
+	private ClickListener musicListener=new ClickListener(){
+		@Override
+		public void clicked(InputEvent event, float x, float y) {
+				if(event.getListenerActor().getName()=="music_on"){ musicOn.setVisible(false);musicOff.setVisible(true); rootGame.setIfMusic(false); ResourseManager.getInstance().bgMusic.stop(); }
+				if(event.getListenerActor().getName()=="music_off"){  musicOn.setVisible(true) ;musicOff.setVisible(false); rootGame.setIfMusic(true);  ResourseManager.getInstance().bgMusic.play();}
+				if(event.getListenerActor().getName()=="sound_on"){ soundOn.setVisible(false); soundOff.setVisible(true); ifSound=false; }
+				if(event.getListenerActor().getName()=="sound_off"){ soundOn.setVisible(true); soundOff.setVisible(false); ifSound=true; }
+
+	    	}
+	};
 
 	private Color toRGB(int r, int g, int b) {
         float RED = r / 255.0f;
@@ -178,12 +212,10 @@ public class MenuScreen implements Screen {
 	
 	@Override
 	public void resume() {
-		System.out.println("RESUME!");
 	}
 	
 	@Override
 	public void hide() {
-		System.out.println("HIDE!Menu");
 	}
 
 	@Override

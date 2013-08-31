@@ -13,7 +13,24 @@ public class RootGame extends Game {
 	public SelectLevel selectLevel;
 	public static final int NEED_POINTS = 15;
 	private int level;
+	private boolean ifSound=true,ifMusic=true;
 
+	public boolean ifMusic() {
+		return ifMusic;
+	}
+
+	public void setIfMusic(boolean ifMusic) {
+		this.ifMusic = ifMusic;
+	}
+
+	public void setIfSound(boolean ifSound) {
+		this.ifSound = ifSound;
+	}
+
+	public boolean ifSound(){
+		return ifSound;
+	}
+	
 	public int getLevel() {
 		return level;
 	}

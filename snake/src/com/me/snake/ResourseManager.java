@@ -1,6 +1,8 @@
 package com.me.snake;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,11 +16,12 @@ public class ResourseManager {
 	public Texture eatTx, backgroundGame, backgroundTx, backgroundSelectLvl,
 			wallTx, borderTx, controlBut, fontScTx, fontTx, exitTx, pauseTx,
 			headTx, tailTx, bodyTx, tileTx, lockedTx, starTx, ctrlStart,
-			ctrlBack, menuTx, completedTx, recordTx, backgroundOver, nextLvlTx;
+			ctrlBack, menuTx, completedTx, recordTx, backgroundOver, nextLvlTx, musicOnTx,musicOffTx, soundOnTx, soundOffTx;
 	public BitmapFont fontSc, font, fontDone;
 	public SpriteBatch batch;
-
 	public Skin skin;
+	public Sound buttonSound, pickUpSound;
+	public Music bgMusic;
 
 	public ResourseManager() {
 		load();
@@ -26,7 +29,6 @@ public class ResourseManager {
 	}
 
 	public void resourseManager() {
-		System.out.println("res load");
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
@@ -99,6 +101,17 @@ public class ResourseManager {
 		recordTx = new Texture(Gdx.files.internal("data/record.png"));
 		recordTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
+		musicOnTx= new Texture(Gdx.files.internal("data/music_on.png"));
+		musicOnTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		musicOffTx= new Texture(Gdx.files.internal("data/music_off.png"));
+		musicOffTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		soundOnTx= new Texture(Gdx.files.internal("data/sound_on.png"));
+		soundOnTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		soundOffTx= new Texture(Gdx.files.internal("data/sound_off.png"));
+		soundOffTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		
 		fontScTx = new Texture(Gdx.files.internal("data/font/wal.png"));
 		fontScTx.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		fontSc = new BitmapFont(Gdx.files.internal("data/font/wal.fnt"),
@@ -113,6 +126,10 @@ public class ResourseManager {
 		fontDone.setScale(0.5f * w / 480, 0.5f * h / 320);
 		
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+		
+		buttonSound = Gdx.audio.newSound(Gdx.files.internal("data/sounds/button.wav"));
+		pickUpSound=Gdx.audio.newSound(Gdx.files.internal("data/sounds/pickUp.wav"));
+		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/snakeMusic.mp3"));
 
 	}
 
@@ -146,6 +163,13 @@ public class ResourseManager {
 		fontDone.dispose();
 		batch.dispose();
 		skin.dispose();
+		buttonSound.dispose();
+		pickUpSound.dispose();
+		bgMusic.dispose();
+		musicOnTx.dispose();
+		musicOffTx.dispose();
+		soundOnTx.dispose();
+		soundOffTx.dispose();
 	}
 
 	public void load() {
