@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class ResourseManager {
@@ -20,6 +21,7 @@ public class ResourseManager {
 	public BitmapFont fontSc, font, fontDone;
 	public SpriteBatch batch;
 	public Skin skin;
+	//public Stage stage;
 	public Sound buttonSound, pickUpSound;
 	public Music bgMusic;
 
@@ -33,6 +35,7 @@ public class ResourseManager {
 		float h = Gdx.graphics.getHeight();
 		
 		batch = new SpriteBatch();
+		//stage=new Stage(0,0, false);
 
 		backgroundGame = new Texture(Gdx.files.internal("data/bgGame.jpg"));
 		backgroundGame.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -134,6 +137,7 @@ public class ResourseManager {
 	}
 
 	public void dispose() {
+		batch.dispose();
 		eatTx.dispose();
 		backgroundGame.dispose();
 		backgroundTx.dispose();
@@ -161,7 +165,6 @@ public class ResourseManager {
 		fontSc.dispose();
 		font.dispose();
 		fontDone.dispose();
-		batch.dispose();
 		skin.dispose();
 		buttonSound.dispose();
 		pickUpSound.dispose();
@@ -170,6 +173,7 @@ public class ResourseManager {
 		musicOffTx.dispose();
 		soundOnTx.dispose();
 		soundOffTx.dispose();
+	//	stage.dispose();
 	}
 
 	public void load() {

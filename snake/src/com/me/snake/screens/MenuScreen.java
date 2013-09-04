@@ -32,12 +32,12 @@ public class MenuScreen implements Screen {
 	private OrthographicCamera camera;
 	private float w = Gdx.graphics.getWidth();
 	private float h = Gdx.graphics.getHeight();
-	private Stage stage;
 	private TextButton selectLevelButt;
-	private TextButton fastGame;
+	private TextButton fastGame,exitButt;
 	private ArrayList scoresArr;
 	private String bestScore;
 	private Image musicOn, musicOff, soundOn, soundOff;
+	private Stage stage;
 	private boolean ifSound=true, ifMusic;
 
 	public MenuScreen(RootGame rootGame) {
@@ -50,8 +50,8 @@ public class MenuScreen implements Screen {
 		float h = Gdx.graphics.getHeight();
 		ifSound=rootGame.ifSound();
 		ifMusic=rootGame.ifMusic();
-		stage = new Stage(0, 0, true);
 		camera = new OrthographicCamera(320, 480);
+		stage=new Stage(0,0,false);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		if(ifMusic) ResourseManager.getInstance().bgMusic.play();
@@ -88,12 +88,11 @@ public class MenuScreen implements Screen {
 		snMenuSp.setSize(0.6f*512*w/480, 0.6f*512*h/320);
 		snMenuSp.setPosition(0.05f*w, 0.15f*h);
 		
-		
 		starSp = new Sprite(ResourseManager.getInstance().recordTx);
 		starSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
 		starSp.setPosition(0.72f*w, 0.62f*h);
 		
-		musicOn=new Image(ResourseManager.getInstance().musicOnTx);
+	/*	musicOn=new Image(ResourseManager.getInstance().musicOnTx);
 		musicOn.setSize(0.18f*512*w/480, 0.15f*512*h/320);
 		musicOn.setPosition(0.4f*w, 0.83f*h);
 		musicOn.setName("music_on");
@@ -114,14 +113,14 @@ public class MenuScreen implements Screen {
 		soundOff.setName("sound_off");
 		soundOff.addListener(musicListener);
 		if(rootGame.ifMusic()) musicOff.setVisible(false); else musicOn.setVisible(false);
-		if(rootGame.ifSound()) soundOff.setVisible(false); else soundOn.setVisible(false);
+		if(rootGame.ifSound()) soundOff.setVisible(false); else soundOn.setVisible(false);*/
 		
 		buttonStyle.font = ResourseManager.getInstance().font;
 		buttonStyle.font.setScale(0.6f*w/480, 0.6f*h/320);
-	    buttonStyle.downFontColor = new Color(toRGB(227, 112, 30));
+	    buttonStyle.downFontColor = new Color(toRGB(37,89,115));
 		
 		fastGame=new TextButton("Fast game", buttonStyle);
-		fastGame.setPosition(0.4f*w, 0.47f*h);
+		fastGame.setPosition(0.4f*w, 0.57f*h);
 	    fastGame.addListener(new ClickListener() {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
@@ -136,7 +135,7 @@ public class MenuScreen implements Screen {
 		});
 		
 		selectLevelButt = new TextButton("Select level", buttonStyle);
-		selectLevelButt.setPosition(0.4f*w, 0.28f*h);
+		selectLevelButt.setPosition(0.4f*w, 0.38f*h);
 	    selectLevelButt.addListener(new ClickListener() {
 	    	@Override
 	    	public void touchUp(InputEvent event, float x, float y,
@@ -147,17 +146,30 @@ public class MenuScreen implements Screen {
 	    	    		rootGame.setScreen(rootGame.selectLevel);
 	    	}
 		});
-	    stage.addActor(fastGame);
+	    
+	    exitButt= new TextButton("Exit", buttonStyle);
+	    exitButt.setPosition(0.4f*w, 0.19f*h);
+	    exitButt.addListener(new ClickListener() {
+	    	@Override
+	    	public void touchUp(InputEvent event, float x, float y,
+	    			int pointer, int button) {
+	    		ResourseManager.getInstance().dispose();
+	    		Gdx.app.exit();
+	    	}
+		});
+	    
+	    
+	   stage.addActor(fastGame);
 	    stage.addActor(selectLevelButt);
-	    stage.addActor(soundOn);
+	    stage.addActor(exitButt);
+	   /* stage.addActor(soundOn);
 	    stage.addActor(soundOff);
 	    stage.addActor(musicOn);
-	    stage.addActor(musicOff);
-	    stage.addListener(new ClickListener(){
+	    stage.addActor(musicOff);*/
+	  stage.addListener(new ClickListener(){
 	    	@Override
 	    	public boolean keyDown(InputEvent event, int keycode) {
 	    		if (keycode == Keys.BACK) {
-	    			dispose();
 	    			ResourseManager.getInstance().dispose();
 	    		}
 	    		return true;
@@ -173,7 +185,6 @@ public class MenuScreen implements Screen {
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		ResourseManager.getInstance().batch.begin();
 		background.draw(ResourseManager.getInstance().batch);
@@ -187,8 +198,8 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		//ResourseManager.getInstance().stage.clear();
 		stage.dispose();
-		
 	}
 	
 	private ClickListener musicListener=new ClickListener(){

@@ -27,7 +27,6 @@ import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
 
 public class SelectLevel implements Screen { 
-	private Stage stage;
 	private Table container;
 	private Image ctrlPanel;
 	float w,h;
@@ -42,7 +41,8 @@ public class SelectLevel implements Screen {
 	private Image ctrlStart, ctrlBack;
 	private boolean ifSound;
 	private LabelStyle labelStyle;
-	private Skin skin;
+	private Stage stage;
+
 
 	public SelectLevel(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -52,12 +52,11 @@ public class SelectLevel implements Screen {
 
 	@Override
 	public void show() {
-		stage=new Stage(0,0, false);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		ResourseManager.getInstance().fontSc.setScale(1);
 		labelStyle=new LabelStyle(ResourseManager.getInstance().fontSc, Color.WHITE);
-		 //ResourseManager.getInstance();
+		stage=new Stage(0,0,false);
 		 w = Gdx.graphics.getWidth();
 		 h = Gdx.graphics.getHeight();
 		 ifSound=rootGame.ifSound();
@@ -88,7 +87,7 @@ public class SelectLevel implements Screen {
 		
 		Gdx.input.setInputProcessor(stage);
 	
-		skin = ResourseManager.getInstance().skin;
+		Skin skin = ResourseManager.getInstance().skin;
 		skin.add("font", ResourseManager.getInstance().fontSc);
 		skin.add("star", ResourseManager.getInstance().starTx);
 		skin.add("tile", ResourseManager.getInstance().tileTx);
@@ -110,7 +109,6 @@ public class SelectLevel implements Screen {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			dispose();
 		    			ResourseManager.getInstance().dispose();
 		    		}
 		    		return true;
@@ -147,22 +145,21 @@ public class SelectLevel implements Screen {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		Skin skin = ResourseManager.getInstance().skin;
-		stage.act(Gdx.graphics.getDeltaTime());
 		ResourseManager.getInstance().batch.begin();
 		bgSp.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
+		stage.act(delta);
 		stage.draw();
 	}
 
 
 	public void resize (int width, int height) {
-		stage.setViewport(width, height, false);
+		stage.setViewport(width, height, true);
 	}
 
 	public void dispose () {
+		//ResourseManager.getInstance().stage.clear();
 		stage.dispose();
-		skin.dispose();
 	}
 
 	public boolean needsGL20 () {
@@ -243,7 +240,7 @@ public class SelectLevel implements Screen {
 			if(event.getListenerActor().getName()=="start") { 
 				if(checkedLvl<=unlockedLvl && checkedLvl>-1) {
 					if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
-		    				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+		    				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 		    					public void run () {
 		    						rootGame.setLevel(checkedLvl);
                                 	dispose();
@@ -255,7 +252,7 @@ public class SelectLevel implements Screen {
 		    	    		
 		} else if(event.getListenerActor().getName()=="back"){ 
 			if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
-			ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+			ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 				public void run () {
 					dispose();
     	    		rootGame.setScreen(rootGame.menuScreen);

@@ -33,10 +33,10 @@ public class GameOver implements Screen, InputProcessor {
 	private Image ctrlStart, ctrlBack;
 	private String message;
 	BufferedWriter out = null;
-	private Stage stage;
 	private int level, unlockedLvl;
 	private ArrayList scoresArr;
 	private boolean ifSound;
+	private Stage stage;
 	
 	public GameOver(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -56,7 +56,7 @@ public class GameOver implements Screen, InputProcessor {
 		 
 		if(unlockedLvl==level){     
 			if(score<RootGame.NEED_POINTS){
-				message="N00b!Level failed";
+				message="Level failed";
 				if(score>record){
 					message="Nice!New record!";
 					scoresArr.set(level,score);
@@ -90,7 +90,7 @@ public class GameOver implements Screen, InputProcessor {
  
 		
 		camera = new OrthographicCamera(320, 480);
-		stage = new Stage(0, 0, true);
+		stage= new Stage(0,0,false);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		
@@ -136,7 +136,6 @@ public class GameOver implements Screen, InputProcessor {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			dispose();
 		    			ResourseManager.getInstance().dispose();
 		    		}
 		    		return true;
@@ -173,6 +172,7 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void dispose() {
+		//ResourseManager.getInstance().stage.clear();
 		stage.dispose();
 	}
 	
@@ -183,7 +183,7 @@ public class GameOver implements Screen, InputProcessor {
 			if(event.getListenerActor().getName()=="start") {
 				//start
 				if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
-				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 					public void run () {
 						rootGame.setLevel(level);
 	    	    		dispose();
@@ -194,7 +194,7 @@ public class GameOver implements Screen, InputProcessor {
 			 if(event.getListenerActor().getName()=="back"){
 				 //Menu
 				 if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
-				 ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+				 ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 						public void run () {
 							dispose();
 		    	    		rootGame.setScreen(rootGame.menuScreen);
@@ -204,8 +204,9 @@ public class GameOver implements Screen, InputProcessor {
 				 
 				 if(event.getListenerActor().getName()=="nextLvl") {
 					 if(ifSound) ResourseManager.getInstance().buttonSound.play(1f);
-					 nextLvl.addAction(Actions.sequence(Actions.color(new Color(toRGB(2,1,1)),0.4f),Actions.run(new Runnable(){
+					 nextLvl.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 							public void run () {
+								dispose();
 								rootGame.setLevel(level+1);
 			    	    		rootGame.setScreen(rootGame.gameScreen);
 							}}))); 

@@ -1,6 +1,7 @@
 package com.me.snake.screens;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -31,8 +32,6 @@ import com.me.snake.SnakePart;
 
 public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
-	private Actor actor;
-	private Stage stage;
 	private Sprite snakeEat, bgSp, mob, visibleApple;
     private Image ctrlUp,ctrlDown, ctrlLeft, ctrlRight ,pause, exit, bigPause;
 	public static float SQUARE_WIDTH, SQUARE_HEIGHT;
@@ -58,7 +57,8 @@ public class GameScreen implements Screen, InputProcessor {
 	private int i;
 	private float alpha, appleAlpha;
 	private float timeAfterShowCompleted;
-	private boolean visible, ifSound;
+	private boolean visible, ifSound, isReadArr;
+	private Stage stage;
 	
 	public GameScreen(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -69,9 +69,8 @@ public class GameScreen implements Screen, InputProcessor {
 		SQUARE_WIDTH = w / pixCountWid; // задаємо ш\в клітинки
 		SQUARE_HEIGHT = h / pixCountHei;
 		stage=new Stage(0,0,false);
+		
 		System.out.println("W: "+ SQUARE_WIDTH+ " H : "+ SQUARE_HEIGHT);
-		//stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
-	//	stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		ifAccelerate=false;
 		speed=0.5f;
 		accelerate=0.04f;
@@ -167,7 +166,6 @@ public class GameScreen implements Screen, InputProcessor {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			dispose();
 		    			ResourseManager.getInstance().dispose();
 		    		}
 		    		return true;
@@ -217,7 +215,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	}
 	
-	private boolean readArr (){
+	private void readArr (){
 		FileHandle handle = Gdx.files.internal("data/mobs/level"+level+".txt");
 		if(handle.exists()){
 		String jsonText=handle.readString();  //Зчитали массив з файлу
@@ -240,9 +238,9 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 			mobsWay.add(bytes);
 		}
-		return true; //Тру якшо моб є в цьому лвлі
+		isReadArr=true;; //Тру якшо моб є в цьому лвлі
       } else 
-		return false;
+		isReadArr= false;
 	}
 
 	private void pickUp() {
@@ -280,7 +278,7 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 	
 	private void mobMove(){
-		if(readArr()){
+		if(isReadArr){
 		
 		if( i>=mobsWay.size()) i=0;
 		mob.setPosition(mobsWay.get(i).get(0) *SQUARE_WIDTH, mobsWay.get(i).get(1)*SQUARE_HEIGHT);
@@ -301,14 +299,11 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		stage.act(delta);
-		if(ifPause==false) {
+		if(ifPause==false) { //майже нічо не займає!
 			step(delta);
 		}
 		ResourseManager.getInstance().batch.begin();
-		
 		bgSp.draw(ResourseManager.getInstance().batch);
 		for(Sprite wall:wallsSp){
 			wall.draw(ResourseManager.getInstance().batch);
@@ -318,10 +313,9 @@ public class GameScreen implements Screen, InputProcessor {
 		snakeEat.draw(ResourseManager.getInstance().batch);
 		ateApple();
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
-		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"FPS "+ Gdx.graphics.getFramesPerSecond(), 13*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
-		mob.draw(ResourseManager.getInstance().batch);
+		if(isReadArr)mob.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
-		
+		stage.act(delta);
 		stage.draw();
 	}
 	
@@ -376,7 +370,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public ClickListener ctrlClickListener = new ClickListener() {
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-			event.getListenerActor().addAction(Actions.color(new Color(toRGB(2,1,1,0.8f))));
+			event.getListenerActor().addAction(Actions.color(new Color(toRGB(37,89,115,0.8f))));
 			if(event.getListenerActor().getName()== "ctrlUp")	 wayNew = 2;
 			if(event.getListenerActor().getName()== "ctrlLeft")  wayNew=1;
 			if(event.getListenerActor().getName()== "ctrlRight") wayNew=3;
@@ -384,7 +378,7 @@ public class GameScreen implements Screen, InputProcessor {
 			return true;
 		};	
 		public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-			event.getListenerActor().addAction(Actions.color(toRGB(204,255,255,0.8f)));
+			event.getListenerActor().addAction(Actions.color(toRGB(37,89,115,0.8f)));
 		};
 		
 	};
@@ -413,6 +407,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
+		//ResourseManager.getInstance().stage.clear();
 		stage.dispose();
 	}
 
@@ -532,7 +527,6 @@ break;
 	
 	@Override
 	public void resize(int width, int height) {
-		stage.setViewport(width, height, true);
 		}
 	
 	@Override
