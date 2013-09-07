@@ -97,33 +97,35 @@ public class GameOver implements Screen, InputProcessor {
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 		
 		
-		background=new Sprite(ResourseManager.getInstance().backgroundOver);
+		background=new Sprite(ResourseManager.getInstance().backgroundSelectLvl);
 		background.setPosition(0, 0);
 		background.setSize(w,h);
 		
-		recordSp=new Sprite(ResourseManager.getInstance().recordTx);
+		recordSp=new Sprite(ResourseManager.getInstance().atlasParts.findRegion("record"));
 		recordSp.setPosition(0.7f*w, 0.72f*h);
 		recordSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
 		
 		ResourseManager.getInstance().font.setScale(0.6f*w/480,0.6f*h/320);
 		
-		ctrlStart=new Image(ResourseManager.getInstance().ctrlStart);
-		ctrlStart.setSize(0.5f*256*w/480, 0.5f*256*h/320);
-		ctrlStart.setPosition(0.73f*w, 0.15f*h);
+		ctrlStart=new Image(ResourseManager.getInstance().atlasControl.findRegion("start"));
+		ctrlStart.setSize(0.4f*256*w/480, 0.4f*256*h/320);
+		ctrlStart.setPosition(0.73f*w, 0.2f*h);
 		ctrlStart.setName("start");
 		ctrlStart.addListener(buttonClickListener);
 		
 		
-		ctrlBack=new Image(ResourseManager.getInstance().ctrlBack);
-		ctrlBack.setSize(0.53f*256*w/480, 0.53f*256*h/320);
-		ctrlBack.setPosition(0.5f*w, -0.225f*h);
+		ctrlBack=new Image(ResourseManager.getInstance().atlasControl.findRegion("back"));
+		ctrlBack.setOrigin(ctrlBack.getWidth()/2, ctrlBack.getHeight()/2);
+		ctrlBack.setRotation(-90);
+		ctrlBack.setSize(0.145f*w, 0.145f*w*1.35f);
+		ctrlBack.setPosition(0.543f*w, -0.25f*h);
 		ctrlBack.setName("back");
 		ctrlBack.addListener(buttonClickListener);
 		
-		nextLvl=new Image(ResourseManager.getInstance().nextLvlTx);
+		nextLvl=new Image(ResourseManager.getInstance().atlasControl.findRegion("nextLvl"));
 		nextLvl.setName("nextLvl");
 		nextLvl.setPosition(0.75f*w, 0);
-		nextLvl.setSize(0.25f*w, 0.2f*w/1.45f);
+		nextLvl.setSize(0.25f*w, 0.23f*w/1.45f);
 		nextLvl.addListener(buttonClickListener);
 		
 		setRecord();

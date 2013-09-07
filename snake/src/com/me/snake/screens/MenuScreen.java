@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -27,7 +28,8 @@ import com.me.snake.RootGame;
 
 public class MenuScreen implements Screen {
 
-	private Sprite background, snMenuSp,starSp;
+	private Sprite  snMenuSp,starSp;
+	private Sprite background;
 	private RootGame rootGame;
 	private OrthographicCamera camera;
 	private float w = Gdx.graphics.getWidth();
@@ -54,10 +56,15 @@ public class MenuScreen implements Screen {
 		stage=new Stage(0,0,false);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
-		if(ifMusic) ResourseManager.getInstance().bgMusic.play();
-		ResourseManager.getInstance().bgMusic.setLooping(true);
-		ResourseManager.getInstance().fontSc.setScale(0.35f * w / 480, 0.35f * h / 320);
 		
+	/*	if(ifMusic)
+			if(!ResourseManager.getInstance().bgMusic.isPlaying()) {
+				ResourseManager.getInstance().bgMusic.play();
+				ResourseManager.getInstance().bgMusic.setLooping(true);
+			}*/
+				
+		
+		ResourseManager.getInstance().fontSc.setScale(0.35f * w / 480, 0.35f * h / 320);
 		
 		Json json = new Json();
 		FileHandle handle = Gdx.files.local("scores.txt");
@@ -81,39 +88,40 @@ public class MenuScreen implements Screen {
 		
 		background = new Sprite(ResourseManager.getInstance().backgroundTx);
 		background.setSize(w, h);
-		background.setPosition(0,0);		
+		background.setPosition(0,0);
 		
 		
-		snMenuSp=new Sprite(ResourseManager.getInstance().menuTx);
+		snMenuSp=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("snakeLogo"));
 		snMenuSp.setSize(0.6f*512*w/480, 0.6f*512*h/320);
 		snMenuSp.setPosition(0.05f*w, 0.15f*h);
 		
-		starSp = new Sprite(ResourseManager.getInstance().recordTx);
+		starSp = new Sprite(ResourseManager.getInstance().atlasParts.createSprite("record"));
 		starSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
 		starSp.setPosition(0.72f*w, 0.62f*h);
 		
-	/*	musicOn=new Image(ResourseManager.getInstance().musicOnTx);
-		musicOn.setSize(0.18f*512*w/480, 0.15f*512*h/320);
+		
+		musicOn=new Image(ResourseManager.getInstance().atlasSound.findRegion("music_on"));
+		musicOn.setSize(0.22f*256*w/480, 0.21f*256*h/320);
 		musicOn.setPosition(0.4f*w, 0.83f*h);
 		musicOn.setName("music_on");
 		musicOn.addListener(musicListener);
-		musicOff=new Image(ResourseManager.getInstance().musicOffTx);
-		musicOff.setSize(0.18f*512*w/480, 0.15f*512*h/320);
+		musicOff=new Image(ResourseManager.getInstance().atlasSound.findRegion("music_off"));
+		musicOff.setSize(0.22f*256*w/480, 0.21f*256*h/320);
 		musicOff.setPosition(0.4f*w, 0.83f*h);
 		musicOff.setName("music_off");
 		musicOff.addListener(musicListener);
-		soundOn=new Image(ResourseManager.getInstance().soundOnTx);
-		soundOn.setSize(0.15f*512*w/480, 0.15f*512*h/320);
+		soundOn=new Image(ResourseManager.getInstance().atlasSound.findRegion("sound_on"));
+		soundOn.setSize(0.22f*256*w/480, 0.21f*256*h/320);
 		soundOn.setPosition(0.55f*w, 0.83f*h);
 		soundOn.setName("sound_on");
 		soundOn.addListener(musicListener);
-		soundOff=new Image(ResourseManager.getInstance().soundOffTx);
-		soundOff.setSize(0.15f*512*w/480, 0.15f*512*h/320);
+		soundOff=new Image(ResourseManager.getInstance().atlasSound.findRegion("sound_off"));
+		soundOff.setSize(0.22f*256*w/480, 0.21f*256*h/320);
 		soundOff.setPosition(0.55f*w, 0.83f*h);
 		soundOff.setName("sound_off");
 		soundOff.addListener(musicListener);
 		if(rootGame.ifMusic()) musicOff.setVisible(false); else musicOn.setVisible(false);
-		if(rootGame.ifSound()) soundOff.setVisible(false); else soundOn.setVisible(false);*/
+		if(rootGame.ifSound()) soundOff.setVisible(false); else soundOn.setVisible(false);
 		
 		buttonStyle.font = ResourseManager.getInstance().font;
 		buttonStyle.font.setScale(0.6f*w/480, 0.6f*h/320);
@@ -162,10 +170,10 @@ public class MenuScreen implements Screen {
 	   stage.addActor(fastGame);
 	    stage.addActor(selectLevelButt);
 	    stage.addActor(exitButt);
-	   /* stage.addActor(soundOn);
-	    stage.addActor(soundOff);
-	    stage.addActor(musicOn);
-	    stage.addActor(musicOff);*/
+	    	stage.addActor(soundOn);
+	    	stage.addActor(soundOff);
+	    	stage.addActor(musicOn);
+	    	stage.addActor(musicOff);
 	  stage.addListener(new ClickListener(){
 	    	@Override
 	    	public boolean keyDown(InputEvent event, int keycode) {
@@ -209,7 +217,7 @@ public class MenuScreen implements Screen {
 				if(event.getListenerActor().getName()=="music_off"){  musicOn.setVisible(true) ;musicOff.setVisible(false); rootGame.setIfMusic(true);  ResourseManager.getInstance().bgMusic.play();}
 				if(event.getListenerActor().getName()=="sound_on"){ soundOn.setVisible(false); soundOff.setVisible(true); ifSound=false; }
 				if(event.getListenerActor().getName()=="sound_off"){ soundOn.setVisible(true); soundOff.setVisible(false); ifSound=true; }
-
+			
 	    	}
 	};
 

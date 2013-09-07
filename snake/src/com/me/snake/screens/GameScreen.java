@@ -103,7 +103,7 @@ public class GameScreen implements Screen, InputProcessor {
 		headPart = new SnakePart(pixCountWid / 2, pixCountHei / 2, "head");
 		parts.add(headPart);
 		
-		pause=new Image(ResourseManager.getInstance().pauseTx);
+		pause=new Image(ResourseManager.getInstance().atlasParts.findRegion("pause"));
 		pause.setSize(0.15f*w, 0.23f*h);
 		pause.setPosition(-2, 12.5f*SQUARE_HEIGHT);
 		pause.setColor(1,1,1,0.8f);
@@ -116,7 +116,7 @@ public class GameScreen implements Screen, InputProcessor {
 	    	}
 		});
 		
-		bigPause=new Image(ResourseManager.getInstance().pauseTx);
+		bigPause=new Image(ResourseManager.getInstance().atlasParts.findRegion("pause"));
 		bigPause.setSize(0.9f*w, 1f*h);
 		bigPause.setPosition(0.18f*w, 0.3f*h);
 		bigPause.setColor(1, 1, 1, 0.5f);
@@ -129,7 +129,7 @@ public class GameScreen implements Screen, InputProcessor {
 		});
 		bigPause.setVisible(false);
 	
-		exit=new Image(ResourseManager.getInstance().exitTx);
+		exit=new Image(ResourseManager.getInstance().atlasParts.findRegion("exit"));
 		exit.setSize(0.15f*w, 0.23f*h);
 		exit.setPosition(18*SQUARE_WIDTH, 12.5f*SQUARE_HEIGHT);
 		exit.setColor(1,1,1,0.8f);
@@ -142,13 +142,13 @@ public class GameScreen implements Screen, InputProcessor {
 	    	}
 		});
 		
-		snakeEat = new Sprite(ResourseManager.getInstance().eatTx);
+		snakeEat = new Sprite(ResourseManager.getInstance().atlasParts.createSprite("eat"));
 		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		visibleApple=new Sprite(ResourseManager.getInstance().eatTx);
+		visibleApple=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("eat"));
 		visibleApple.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		mob=new Sprite(ResourseManager.getInstance().borderTx);
+		mob=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("gud"));
 		mob.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
 		ResourseManager.getInstance().font.setScale(0.35f);
@@ -156,7 +156,7 @@ public class GameScreen implements Screen, InputProcessor {
 		mobMove();
 		drawWalls();
 		
-		Gdx.input.setInputProcessor(stage);
+		
 		pickUp();
 		drawCtrlBut();
 		stage.addActor(pause);
@@ -171,11 +171,12 @@ public class GameScreen implements Screen, InputProcessor {
 		    		return true;
 		    	}
 		    });
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	
 	private void drawCtrlBut(){
-		ctrlUp=new Image(ResourseManager.getInstance().controlBut);
+		ctrlUp=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
 		ctrlUp.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		ctrlUp.setRotation(90);
 		ctrlUp.setName("ctrlUp");
@@ -185,7 +186,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlUp.addListener(ctrlClickListener);
 		stage.addActor(ctrlUp);
 		
-		ctrlLeft=new Image(ResourseManager.getInstance().controlBut);
+		ctrlLeft=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
 		ctrlLeft.setName("ctrlLeft");
 		ctrlLeft.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		ctrlLeft.rotate(180);
@@ -195,7 +196,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlLeft.addListener(ctrlClickListener);
 		stage.addActor(ctrlLeft);
 		
-		ctrlRight=new Image(ResourseManager.getInstance().controlBut);
+		ctrlRight=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
 		ctrlRight.setName("ctrlRight");
 		ctrlRight.setSize(0.5f*128*w/480, 0.4f*128*h/320);
 		ctrlRight.setPosition(5*SQUARE_WIDTH, -5);
@@ -203,7 +204,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlRight.addListener(ctrlClickListener);
 		stage.addActor(ctrlRight);
 	
-		ctrlDown=new Image(ResourseManager.getInstance().controlBut);
+		ctrlDown=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
 		ctrlDown.setName("ctrlDown");
 		ctrlDown.setRotation(270);
 		ctrlDown.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
@@ -271,7 +272,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void createWallSp (int mapX, int mapY, String type){
 		map[mapX][mapY]=1;
-		Sprite sp = (type=="border") ? new Sprite(ResourseManager.getInstance().borderTx):new Sprite(ResourseManager.getInstance().wallTx);
+		Sprite sp = (type=="border") ? new Sprite(ResourseManager.getInstance().atlasParts.createSprite("border")):new Sprite(ResourseManager.getInstance().atlasParts.createSprite("wall"));
 		sp.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		sp.setPosition(mapX*SQUARE_WIDTH, mapY*SQUARE_HEIGHT);
 		wallsSp.add(sp);
@@ -300,6 +301,7 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		stage.act(delta);
 		if(ifPause==false) { //לאיזו ם³קמ םו חאילא÷!
 			step(delta);
 		}
@@ -315,7 +317,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch, "score: "+ score, 9*SQUARE_WIDTH, 14*SQUARE_HEIGHT);
 		if(isReadArr)mob.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
-		stage.act(delta);
+		
 		stage.draw();
 	}
 	
@@ -370,7 +372,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public ClickListener ctrlClickListener = new ClickListener() {
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-			event.getListenerActor().addAction(Actions.color(new Color(toRGB(37,89,115,0.8f))));
+			event.getListenerActor().addAction(Actions.color(new Color(toRGB(37,89,115,0.7f))));
 			if(event.getListenerActor().getName()== "ctrlUp")	 wayNew = 2;
 			if(event.getListenerActor().getName()== "ctrlLeft")  wayNew=1;
 			if(event.getListenerActor().getName()== "ctrlRight") wayNew=3;
@@ -378,7 +380,7 @@ public class GameScreen implements Screen, InputProcessor {
 			return true;
 		};	
 		public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-			event.getListenerActor().addAction(Actions.color(toRGB(37,89,115,0.8f)));
+			event.getListenerActor().addAction(Actions.color(toRGB(204,255,255,0.7f)));
 		};
 		
 	};
@@ -527,6 +529,7 @@ break;
 	
 	@Override
 	public void resize(int width, int height) {
+		stage.setViewport(width, height, true);
 		}
 	
 	@Override

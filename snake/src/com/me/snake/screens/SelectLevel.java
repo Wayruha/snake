@@ -52,11 +52,12 @@ public class SelectLevel implements Screen {
 
 	@Override
 	public void show() {
+		stage=new Stage(0,0,false);
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		ResourseManager.getInstance().fontSc.setScale(1);
 		labelStyle=new LabelStyle(ResourseManager.getInstance().fontSc, Color.WHITE);
-		stage=new Stage(0,0,false);
+		
 		 w = Gdx.graphics.getWidth();
 		 h = Gdx.graphics.getHeight();
 		 ifSound=rootGame.ifSound();
@@ -71,16 +72,18 @@ public class SelectLevel implements Screen {
 		bgSp.setSize(w, h);
 		
 		
-		ctrlStart=new Image(ResourseManager.getInstance().ctrlStart);
-		ctrlStart.setSize(0.5f*256*w/480, 0.5f*256*h/320);
-		ctrlStart.setPosition(0.73f*w, 0.15f*h);
+		ctrlStart=new Image(ResourseManager.getInstance().atlasControl.findRegion("start"));
+		ctrlStart.setSize(0.45f*256*w/480, 0.45f*256*h/320);
+		ctrlStart.setPosition(0.73f*w, 0.2f*h);
 		ctrlStart.setName("start");
 		ctrlStart.addListener(buttonClickListener);
 		
 		
-		ctrlBack=new Image(ResourseManager.getInstance().ctrlBack);
-		ctrlBack.setSize(0.53f*256*w/480, 0.53f*256*h/320);
-		ctrlBack.setPosition(0.5f*w, -0.23f*h);
+		ctrlBack=new Image(ResourseManager.getInstance().atlasControl.findRegion("back"));
+		ctrlBack.setOrigin(ctrlBack.getWidth()/2, ctrlBack.getHeight()/2);
+		ctrlBack.setRotation(-90);
+		ctrlBack.setSize(0.145f*w, 0.145f*w*1.35f);
+		ctrlBack.setPosition(0.543f*w, -0.25f*h);
 		ctrlBack.setName("back");
 		ctrlBack.addListener(buttonClickListener);
 		

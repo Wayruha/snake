@@ -1,0 +1,32 @@
+artControl.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+back
+  rotate: true
+  xy: 234, 260
+  size: 167, 124
+  orig: 167, 124
+  offset: 0, 0
+  index: -1
+control
+  rotate: false
+  xy: 360, 2
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+nextLvl
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+start
+  rotate: false
+  xy: 2, 260
+  size: 230, 230
+  orig: 256, 256
+  offset: 12, 20
+  index: -1
