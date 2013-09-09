@@ -26,7 +26,7 @@ import com.me.snake.RootGame;
 public class GameOver implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private Image nextLvl;
-	private Sprite background, recordSp;
+	private Sprite background, recordSp, osnova, snOver;
 	private int score,record;
 	private float w,h;
 	private RootGame rootGame;
@@ -97,35 +97,41 @@ public class GameOver implements Screen, InputProcessor {
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 		
 		
-		background=new Sprite(ResourseManager.getInstance().backgroundSelectLvl);
+		background= new Sprite(ResourseManager.getInstance().background);
 		background.setPosition(0, 0);
 		background.setSize(w,h);
 		
-		recordSp=new Sprite(ResourseManager.getInstance().atlasParts.findRegion("record"));
-		recordSp.setPosition(0.7f*w, 0.72f*h);
-		recordSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
+		snOver=new Sprite(ResourseManager.getInstance().atlas.findRegion("snOver"));
+		snOver.setPosition(0, 0.47f*h);
+		snOver.setSize(0.33f*w, 0.53f*h);
+		
+		recordSp = new Sprite(ResourseManager.getInstance().atlas.findRegion("score"));
+		recordSp.setSize(1f*128*w/480, 0.8f*128*h/320);
+		recordSp.setPosition(0.71f*w, 0.7f*h);
 		
 		ResourseManager.getInstance().font.setScale(0.6f*w/480,0.6f*h/320);
 		
-		ctrlStart=new Image(ResourseManager.getInstance().atlasControl.findRegion("start"));
-		ctrlStart.setSize(0.4f*256*w/480, 0.4f*256*h/320);
+		osnova=new Sprite(ResourseManager.getInstance().atlas.createSprite("osnova"));
+		osnova.setSize(0.5f*w, 0.5f*w/1.61f);
+		osnova.setPosition(0.5f*w, 0);
+		
+		ctrlStart=new Image(ResourseManager.getInstance().atlas.findRegion("start"));
+		ctrlStart.setSize(0.45f*256*w/480, 0.45f*256*h/320);
 		ctrlStart.setPosition(0.73f*w, 0.2f*h);
 		ctrlStart.setName("start");
 		ctrlStart.addListener(buttonClickListener);
 		
 		
-		ctrlBack=new Image(ResourseManager.getInstance().atlasControl.findRegion("back"));
-		ctrlBack.setOrigin(ctrlBack.getWidth()/2, ctrlBack.getHeight()/2);
-		ctrlBack.setRotation(-90);
-		ctrlBack.setSize(0.145f*w, 0.145f*w*1.35f);
-		ctrlBack.setPosition(0.543f*w, -0.25f*h);
+		ctrlBack=new Image(ResourseManager.getInstance().atlas.findRegion("back"));
+		ctrlBack.setSize(0.185f*w, 0.185f*w/1.35f);
+		ctrlBack.setPosition(0.49f*w, 0);
 		ctrlBack.setName("back");
 		ctrlBack.addListener(buttonClickListener);
 		
-		nextLvl=new Image(ResourseManager.getInstance().atlasControl.findRegion("nextLvl"));
+		nextLvl=new Image(ResourseManager.getInstance().atlas.findRegion("nextLvl"));
 		nextLvl.setName("nextLvl");
-		nextLvl.setPosition(0.75f*w, 0);
-		nextLvl.setSize(0.25f*w, 0.23f*w/1.45f);
+		nextLvl.setPosition(0.725f*w, 0);
+		nextLvl.setSize(0.28f*w, 0.23f*w/1.45f);
 		nextLvl.addListener(buttonClickListener);
 		
 		setRecord();
@@ -156,10 +162,11 @@ public class GameOver implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
 		ResourseManager.getInstance().batch.begin();
 		background.draw(ResourseManager.getInstance().batch);
 		recordSp.draw(ResourseManager.getInstance().batch);
+		snOver.draw(ResourseManager.getInstance().batch);
+		osnova.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,message,0.3f*w, 0.67f*h);
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch, "level "+level, 0.35f*w, 0.95f*h);
 		ResourseManager.getInstance().fontSc.setScale(0.3f*w/480,0.3f*h/320);

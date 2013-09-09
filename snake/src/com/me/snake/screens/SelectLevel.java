@@ -30,7 +30,7 @@ public class SelectLevel implements Screen {
 	private Table container;
 	private Image ctrlPanel;
 	float w,h;
-	private Sprite bgSp;
+	private Sprite bgSp, osnova;
 	private RootGame rootGame;
 	private GameScreen gameScreen;
 	private ArrayList scoresArr;
@@ -67,42 +67,36 @@ public class SelectLevel implements Screen {
 		 
 		 checkedLvl=-1;
 		 
-		bgSp = new Sprite(ResourseManager.getInstance().backgroundSelectLvl);
+		bgSp = new Sprite(ResourseManager.getInstance().background);
 		bgSp.setPosition(0, 0);
 		bgSp.setSize(w, h);
 		
+		osnova=new Sprite(ResourseManager.getInstance().atlas.createSprite("osnova"));
+		osnova.setSize(0.5f*w, 0.5f*w/1.61f);
+		osnova.setPosition(0.5f*w, 0);
 		
-		ctrlStart=new Image(ResourseManager.getInstance().atlasControl.findRegion("start"));
+		ctrlStart=new Image(ResourseManager.getInstance().atlas.findRegion("start"));
 		ctrlStart.setSize(0.45f*256*w/480, 0.45f*256*h/320);
 		ctrlStart.setPosition(0.73f*w, 0.2f*h);
 		ctrlStart.setName("start");
 		ctrlStart.addListener(buttonClickListener);
 		
 		
-		ctrlBack=new Image(ResourseManager.getInstance().atlasControl.findRegion("back"));
+		ctrlBack=new Image(ResourseManager.getInstance().atlas.findRegion("back"));
 		ctrlBack.setOrigin(ctrlBack.getWidth()/2, ctrlBack.getHeight()/2);
-		ctrlBack.setRotation(-90);
-		ctrlBack.setSize(0.145f*w, 0.145f*w*1.35f);
-		ctrlBack.setPosition(0.543f*w, -0.25f*h);
+		//ctrlBack.setRotation(-90);
+		ctrlBack.setSize(0.185f*w, 0.185f*w/1.35f);  //Такі розміра бо воно ж обернуте
+		ctrlBack.setPosition(0.5f*w, 0);
 		ctrlBack.setName("back");
 		ctrlBack.addListener(buttonClickListener);
 		
 		
 		Gdx.input.setInputProcessor(stage);
-	
-		Skin skin = ResourseManager.getInstance().skin;
-		skin.add("font", ResourseManager.getInstance().fontSc);
-		skin.add("star", ResourseManager.getInstance().starTx);
-		skin.add("tile", ResourseManager.getInstance().tileTx);
-		skin.add("locked", ResourseManager.getInstance().lockedTx);
-		skin.add("completed", ResourseManager.getInstance().completedTx);
 		
-		score = new Label("",skin);
+		score = new Label("",labelStyle);
 		score.setFontScale(0.3f);
 		score.setPosition(0.8f*w, 0.1f*h);
-		score.setStyle(labelStyle);
-		
-		
+			
 		container = new Table();
 		stage.addActor(container);
 		stage.addActor(ctrlStart);
@@ -150,6 +144,7 @@ public class SelectLevel implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		ResourseManager.getInstance().batch.begin();
 		bgSp.draw(ResourseManager.getInstance().batch);
+		osnova.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
 		stage.act(delta);
 		stage.draw();
@@ -177,23 +172,19 @@ public class SelectLevel implements Screen {
 	 * @return The button to use for the level
 	 */
 	public Button getLevelButton(int level) {
-		Skin skin = ResourseManager.getInstance().skin;
-		Button button = new Button(skin);
-		ButtonStyle style = button.getStyle();
-		style.up = 	style.down =null;
-	
-		// Create the label to show the level number
+		ButtonStyle buttonStyle=new ButtonStyle();
+		buttonStyle.up=buttonStyle.down=null;
+		Button button = new Button(buttonStyle);
 		
-		Label label = new Label(String.valueOf(level), skin);
+		Label label = new Label(String.valueOf(level), labelStyle);
 		label.setFontScale(0.3f);
 		label.setAlignment(Align.center);
-		label.setStyle(labelStyle);
 		
 		// Stack the image and the label at the top of our button
-		Image img=new Image(skin.getDrawable("tile"));
-		Image lockedImg=new Image(skin.getDrawable("locked"));
-		img.setScale(0.9f, 1.6f);
-		lockedImg.setSize(img.getWidth(),img.getHeight());
+		Image img=new Image(ResourseManager.getInstance().atlas.findRegion("tile"));
+		Image lockedImg=new Image(ResourseManager.getInstance().atlas.findRegion("lockedImg"));
+		img.setScale(0.85f*w/480, 1f*h/320);
+		lockedImg.setScale(0.83f, 1f);
 		
 		if(unlockedLvl>=level) button.stack(img,label);	else   button.stack(img,label, lockedImg);
 	
@@ -204,10 +195,10 @@ public class SelectLevel implements Screen {
 		starTable.defaults().pad(5);
 		if (stars > 0) {
 			for (int star = 0; star < 3; star++) {
-				if (stars > star)  starTable.add(new Image(skin.getDrawable("star"))).width(20).height(20); 
+				if (stars > star)  starTable.add(new Image(ResourseManager.getInstance().atlas.findRegion("star"))).width(20).height(20); 
 			} 
 		} else if(level<unlockedLvl){
-			starTable.add(new Image(skin.getDrawable("completed"))).width(20).height(20);
+			starTable.add(new Image(ResourseManager.getInstance().atlas.findRegion("completed"))).width(20).height(20);
 		}
 		
 		button.row();

@@ -57,11 +57,11 @@ public class MenuScreen implements Screen {
 		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
 		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
 		
-	/*	if(ifMusic)
+		if(ifMusic)
 			if(!ResourseManager.getInstance().bgMusic.isPlaying()) {
 				ResourseManager.getInstance().bgMusic.play();
 				ResourseManager.getInstance().bgMusic.setLooping(true);
-			}*/
+			}
 				
 		
 		ResourseManager.getInstance().fontSc.setScale(0.35f * w / 480, 0.35f * h / 320);
@@ -86,38 +86,39 @@ public class MenuScreen implements Screen {
 
 
 		
-		background = new Sprite(ResourseManager.getInstance().backgroundTx);
+		background =  new Sprite(ResourseManager.getInstance().background);
 		background.setSize(w, h);
 		background.setPosition(0,0);
 		
+		snMenuSp=new Sprite(ResourseManager.getInstance().atlas.findRegion("snakeLogo")); 
+		snMenuSp.setSize(0.3f*512*w/480, 0.4f*512*h/320);  // перевернуте!
+		snMenuSp.setPosition(0.05f*w, 0.25f*h);
 		
-		snMenuSp=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("snakeLogo"));
-		snMenuSp.setSize(0.6f*512*w/480, 0.6f*512*h/320);
-		snMenuSp.setPosition(0.05f*w, 0.15f*h);
-		
-		starSp = new Sprite(ResourseManager.getInstance().atlasParts.createSprite("record"));
-		starSp.setSize(1.05f*128*w/480, 1.1f*128*h/320);
-		starSp.setPosition(0.72f*w, 0.62f*h);
+		starSp = new Sprite(ResourseManager.getInstance().atlas.findRegion("score"));
+		starSp.setSize(1f*128*w/480, 0.8f*128*h/320);
+		starSp.setPosition(0.74f*w, 0.65f*h);
 		
 		
-		musicOn=new Image(ResourseManager.getInstance().atlasSound.findRegion("music_on"));
+		musicOn=new Image(ResourseManager.getInstance().atlas.findRegion("music_on"));
 		musicOn.setSize(0.22f*256*w/480, 0.21f*256*h/320);
-		musicOn.setPosition(0.4f*w, 0.83f*h);
+		musicOn.setPosition(0.4f*w, 0.8f*h);
 		musicOn.setName("music_on");
 		musicOn.addListener(musicListener);
-		musicOff=new Image(ResourseManager.getInstance().atlasSound.findRegion("music_off"));
+		musicOff=new Image(ResourseManager.getInstance().atlas.findRegion("music_off"));
+		musicOff.setOrigin(musicOff.getWidth()/2, musicOff.getHeight()/2);
+		//musicOff.rotate(-90);
 		musicOff.setSize(0.22f*256*w/480, 0.21f*256*h/320);
-		musicOff.setPosition(0.4f*w, 0.83f*h);
+		musicOff.setPosition(0.4f*w, 0.8f*h);
 		musicOff.setName("music_off");
 		musicOff.addListener(musicListener);
-		soundOn=new Image(ResourseManager.getInstance().atlasSound.findRegion("sound_on"));
+		soundOn=new Image(ResourseManager.getInstance().atlas.findRegion("sound_on"));
 		soundOn.setSize(0.22f*256*w/480, 0.21f*256*h/320);
-		soundOn.setPosition(0.55f*w, 0.83f*h);
+		soundOn.setPosition(0.55f*w, 0.8f*h);
 		soundOn.setName("sound_on");
 		soundOn.addListener(musicListener);
-		soundOff=new Image(ResourseManager.getInstance().atlasSound.findRegion("sound_off"));
+		soundOff=new Image(ResourseManager.getInstance().atlas.findRegion("sound_off"));
 		soundOff.setSize(0.22f*256*w/480, 0.21f*256*h/320);
-		soundOff.setPosition(0.55f*w, 0.83f*h);
+		soundOff.setPosition(0.55f*w, 0.8f*h);
 		soundOff.setName("sound_off");
 		soundOff.addListener(musicListener);
 		if(rootGame.ifMusic()) musicOff.setVisible(false); else musicOn.setVisible(false);
@@ -198,7 +199,7 @@ public class MenuScreen implements Screen {
 		background.draw(ResourseManager.getInstance().batch);
 		snMenuSp.draw(ResourseManager.getInstance().batch);
 		starSp.draw(ResourseManager.getInstance().batch);
-		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch,bestScore, 0.79f*w,0.86f*h);
+		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch,bestScore, 0.79f*w,0.9f*h);
 		ResourseManager.getInstance().batch.end();
 		stage.act(delta);
 		stage.draw();

@@ -12,9 +12,9 @@ public class SnakePart {
 
 	public SnakePart(int mapX, int mapY, String type) {
 		
-		if(type=="head") sp=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("snakePartHead"));
-		else if (type=="tail") sp=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("snakePartTail"));
-		else sp=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("snakePart"));
+		if(type=="head") sp=new Sprite(ResourseManager.getInstance().atlas.createSprite("snakeHead"));
+		else if (type=="tail") sp=new Sprite(ResourseManager.getInstance().atlas.createSprite("snakeTail"));
+		else sp=new Sprite(ResourseManager.getInstance().atlas.createSprite("snakePart"));
 		sp.setPosition(mapX*GameScreen.SQUARE_WIDTH, mapY*GameScreen.SQUARE_HEIGHT);
 		sp.setSize(GameScreen.SQUARE_WIDTH, GameScreen.SQUARE_HEIGHT);
 		x=sp.getX();

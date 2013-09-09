@@ -32,7 +32,7 @@ import com.me.snake.SnakePart;
 
 public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
-	private Sprite snakeEat, bgSp, mob, visibleApple;
+	private Sprite snakeEat, bgSp, mob, visibleApple, bgGame;
     private Image ctrlUp,ctrlDown, ctrlLeft, ctrlRight ,pause, exit, bigPause;
 	public static float SQUARE_WIDTH, SQUARE_HEIGHT;
 	int pixCountWid = 20, pixCountHei = 14, eatArrX, eatArrY, wayOld,
@@ -97,14 +97,18 @@ public class GameScreen implements Screen, InputProcessor {
 			
 		camera = new OrthographicCamera(320, 480);
 		
-		bgSp=new Sprite(ResourseManager.getInstance().backgroundGame);
+		bgSp= new Sprite(ResourseManager.getInstance().background);
 		bgSp.setPosition(0, 0);
 		bgSp.setSize(w, h);
 		headPart = new SnakePart(pixCountWid / 2, pixCountHei / 2, "head");
 		parts.add(headPart);
 		
-		pause=new Image(ResourseManager.getInstance().atlasParts.findRegion("pause"));
-		pause.setSize(0.15f*w, 0.23f*h);
+		bgGame=new Sprite(ResourseManager.getInstance().snGame);
+		bgGame.setSize(w, h);
+		bgGame.setPosition(0, 0);
+		
+		pause=new Image(ResourseManager.getInstance().atlas.findRegion("pause"));
+		pause.setSize(0.12f*w, 0.17f*h);
 		pause.setPosition(-2, 12.5f*SQUARE_HEIGHT);
 		pause.setColor(1,1,1,0.8f);
 		pause.addListener(new ClickListener() {
@@ -116,9 +120,9 @@ public class GameScreen implements Screen, InputProcessor {
 	    	}
 		});
 		
-		bigPause=new Image(ResourseManager.getInstance().atlasParts.findRegion("pause"));
-		bigPause.setSize(0.9f*w, 1f*h);
-		bigPause.setPosition(0.18f*w, 0.3f*h);
+		bigPause=new Image(ResourseManager.getInstance().atlas.findRegion("pause"));
+		bigPause.setSize(0.7f*w, 0.7f*h);
+		bigPause.setPosition(0.18f*w, 0.2f*h);
 		bigPause.setColor(1, 1, 1, 0.5f);
 		bigPause.addListener(new ClickListener() {
 	    	@Override
@@ -129,8 +133,8 @@ public class GameScreen implements Screen, InputProcessor {
 		});
 		bigPause.setVisible(false);
 	
-		exit=new Image(ResourseManager.getInstance().atlasParts.findRegion("exit"));
-		exit.setSize(0.15f*w, 0.23f*h);
+		exit=new Image(ResourseManager.getInstance().atlas.findRegion("exit"));
+		exit.setSize(0.12f*w, 0.17f*h);
 		exit.setPosition(18*SQUARE_WIDTH, 12.5f*SQUARE_HEIGHT);
 		exit.setColor(1,1,1,0.8f);
 		exit.addListener(new ClickListener() {
@@ -142,13 +146,13 @@ public class GameScreen implements Screen, InputProcessor {
 	    	}
 		});
 		
-		snakeEat = new Sprite(ResourseManager.getInstance().atlasParts.createSprite("eat"));
+		snakeEat = new Sprite(ResourseManager.getInstance().atlas.createSprite("eat"));
 		snakeEat.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		visibleApple=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("eat"));
+		visibleApple=new Sprite(ResourseManager.getInstance().atlas.createSprite("eat"));
 		visibleApple.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		mob=new Sprite(ResourseManager.getInstance().atlasParts.createSprite("gud"));
+		mob=new Sprite(ResourseManager.getInstance().atlas.createSprite("gud"));
 		mob.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
 		ResourseManager.getInstance().font.setScale(0.35f);
@@ -176,7 +180,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	
 	private void drawCtrlBut(){
-		ctrlUp=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
+		ctrlUp=new Image(ResourseManager.getInstance().atlas.findRegion("control"));
 		ctrlUp.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		ctrlUp.setRotation(90);
 		ctrlUp.setName("ctrlUp");
@@ -186,7 +190,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlUp.addListener(ctrlClickListener);
 		stage.addActor(ctrlUp);
 		
-		ctrlLeft=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
+		ctrlLeft=new Image(ResourseManager.getInstance().atlas.findRegion("control"));
 		ctrlLeft.setName("ctrlLeft");
 		ctrlLeft.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		ctrlLeft.rotate(180);
@@ -196,7 +200,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlLeft.addListener(ctrlClickListener);
 		stage.addActor(ctrlLeft);
 		
-		ctrlRight=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
+		ctrlRight=new Image(ResourseManager.getInstance().atlas.findRegion("control"));
 		ctrlRight.setName("ctrlRight");
 		ctrlRight.setSize(0.5f*128*w/480, 0.4f*128*h/320);
 		ctrlRight.setPosition(5*SQUARE_WIDTH, -5);
@@ -204,7 +208,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlRight.addListener(ctrlClickListener);
 		stage.addActor(ctrlRight);
 	
-		ctrlDown=new Image(ResourseManager.getInstance().atlasControl.findRegion("control"));
+		ctrlDown=new Image(ResourseManager.getInstance().atlas.findRegion("control"));
 		ctrlDown.setName("ctrlDown");
 		ctrlDown.setRotation(270);
 		ctrlDown.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
@@ -272,7 +276,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void createWallSp (int mapX, int mapY, String type){
 		map[mapX][mapY]=1;
-		Sprite sp = (type=="border") ? new Sprite(ResourseManager.getInstance().atlasParts.createSprite("border")):new Sprite(ResourseManager.getInstance().atlasParts.createSprite("wall"));
+		Sprite sp = (type=="border") ? new Sprite(ResourseManager.getInstance().atlas.createSprite("border")):new Sprite(ResourseManager.getInstance().atlas.createSprite("wall"));
 		sp.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		sp.setPosition(mapX*SQUARE_WIDTH, mapY*SQUARE_HEIGHT);
 		wallsSp.add(sp);
@@ -302,11 +306,13 @@ public class GameScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		stage.act(delta);
+		System.out.println(Gdx.graphics.getFramesPerSecond());
 		if(ifPause==false) { //לאיזו ם³קמ םו חאילא÷!
 			step(delta);
 		}
 		ResourseManager.getInstance().batch.begin();
 		bgSp.draw(ResourseManager.getInstance().batch);
+		bgGame.draw(ResourseManager.getInstance().batch);
 		for(Sprite wall:wallsSp){
 			wall.draw(ResourseManager.getInstance().batch);
 		}
