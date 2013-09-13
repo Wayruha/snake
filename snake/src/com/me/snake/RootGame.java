@@ -11,7 +11,7 @@ public class RootGame extends Game {
 	public MenuScreen menuScreen;
 	public GameOver gameOver;
 	public SelectLevel selectLevel;
-	public static final int NEED_POINTS = 15;
+	public static final int NEED_POINTS = 17;
 	private int level;
 	private boolean ifSound=true,ifMusic=true;
 
@@ -46,7 +46,7 @@ public class RootGame extends Game {
 		gameOver = new GameOver(this);
 		selectLevel = new SelectLevel(this);
 		gameScreen=new GameScreen(this);
-		setScreen(selectLevel);
+		setScreen(menuScreen);
 	}
 
 }

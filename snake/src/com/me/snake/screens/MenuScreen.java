@@ -71,7 +71,7 @@ public class MenuScreen implements Screen {
 	    if (!handle.exists()) {
 			   try {
 			    handle.file().createNewFile();
-			    String jsonText="[0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7]"; //змінити коли зміниться к-сть лвлів
+			    String jsonText="[0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1]"; //змінити коли зміниться к-сть лвлів
 			    handle.writeString(jsonText, true);
 			   } catch (IOException e) {
 			    e.printStackTrace();
@@ -84,19 +84,32 @@ public class MenuScreen implements Screen {
 		
 		final TextButtonStyle buttonStyle = new TextButtonStyle();
 
-
-		
 		background =  new Sprite(ResourseManager.getInstance().background);
 		background.setSize(w, h);
 		background.setPosition(0,0);
 		
 		snMenuSp=new Sprite(ResourseManager.getInstance().atlas.findRegion("snakeLogo")); 
+		snMenuSp.setOrigin(snMenuSp.getWidth()/2, snMenuSp.getHeight()/2);
+		if(!ResourseManager.getInstance().isBig){
+			snMenuSp.setRotation(-90);
+			snMenuSp.setPosition(0, 0.3f*h);
+			//snMenuSp.setScale(1.2f*w/480, 1.2f*h/320);
+		} else{
 		snMenuSp.setSize(0.3f*512*w/480, 0.4f*512*h/320);  // перевернуте!
 		snMenuSp.setPosition(0.05f*w, 0.25f*h);
+		}
 		
 		starSp = new Sprite(ResourseManager.getInstance().atlas.findRegion("score"));
-		starSp.setSize(1f*128*w/480, 0.8f*128*h/320);
-		starSp.setPosition(0.74f*w, 0.65f*h);
+		if(ResourseManager.getInstance().isBig){
+			starSp.setSize(0.27f*w,0.3f*h);
+			starSp.setPosition(0.74f*w, 0.65f*h);
+		}else {
+			starSp.setOrigin(starSp.getWidth()/2, starSp.getHeight()/2);
+			starSp.setRotation(-90);
+			starSp.setPosition(0.78f*w, 0.61f*h);
+			starSp.setSize(0.31f*h,0.27f*w);
+		}
+		
 		
 		
 		musicOn=new Image(ResourseManager.getInstance().atlas.findRegion("music_on"));

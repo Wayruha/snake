@@ -22,6 +22,7 @@ public class ResourseManager {
 	public SpriteBatch batch;
 	public Sound buttonSound, pickUpSound;
 	public Music bgMusic;
+	public boolean isBig;
 
 	public ResourseManager() {
 		load();
@@ -31,6 +32,7 @@ public class ResourseManager {
 	public void resourseManager() {
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
+		if(w>=540 && h>=360) isBig=true; else isBig=false;
 		
 		batch = new SpriteBatch();
 
@@ -63,7 +65,8 @@ public class ResourseManager {
 		pickUpSound=Gdx.audio.newSound(Gdx.files.internal("data/sounds/pickUp.wav"));
 		bgMusic = Gdx.audio.newMusic(Gdx.files.internal("data/sounds/snakeMusic.mp3"));
 		
-		atlas = new TextureAtlas(Gdx.files.internal("data/art.pack"));
+		if(isBig) atlas = new TextureAtlas(Gdx.files.internal("data/bigPack/art.pack")); else
+			atlas = new TextureAtlas(Gdx.files.internal("data/smallPack/art.pack"));
 		
 	}
 

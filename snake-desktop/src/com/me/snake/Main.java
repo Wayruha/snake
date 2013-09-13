@@ -10,8 +10,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "snake";
 		cfg.useGL20 = false;
-		cfg.width = 480;
-		cfg.height = 320;
+		cfg.width = 600;
+		cfg.height = 400;
 		cfg.vSyncEnabled = true;
 		
 		new LwjglApplication(new RootGame(), cfg);

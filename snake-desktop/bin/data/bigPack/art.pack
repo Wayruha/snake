@@ -1,0 +1,204 @@
+
+art.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+osnova
+  rotate: false
+  xy: 1, 426
+  size: 959, 593
+  orig: 959, 593
+  offset: 0, 0
+  index: -1
+snakeLogo
+  rotate: false
+  xy: 1, 1
+  size: 279, 423
+  orig: 512, 512
+  offset: 0, 1
+  index: -1
+score
+  rotate: false
+  xy: 282, 112
+  size: 472, 312
+  orig: 472, 312
+  offset: 0, 0
+  index: -1
+eat
+  rotate: false
+  xy: 756, 168
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+border
+  rotate: false
+  xy: 756, 38
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+control
+  rotate: false
+  xy: 886, 38
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+lockedImg
+  rotate: false
+  xy: 282, 37
+  size: 62, 73
+  orig: 128, 128
+  offset: 32, 33
+  index: -1
+completed
+  rotate: false
+  xy: 346, 54
+  size: 56, 56
+  orig: 56, 56
+  offset: 0, 0
+  index: -1
+
+art2.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+snOver
+  rotate: false
+  xy: 1, 495
+  size: 489, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+exit
+  rotate: false
+  xy: 1, 216
+  size: 361, 277
+  orig: 361, 277
+  offset: 0, 0
+  index: -1
+nextLvl
+  rotate: false
+  xy: 364, 259
+  size: 431, 234
+  orig: 431, 234
+  offset: 0, 0
+  index: -1
+tile
+  rotate: false
+  xy: 492, 730
+  size: 361, 277
+  orig: 361, 277
+  offset: 0, 0
+  index: -1
+start
+  rotate: false
+  xy: 492, 499
+  size: 229, 229
+  orig: 256, 256
+  offset: 13, 20
+  index: -1
+gud
+  rotate: false
+  xy: 364, 1
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+wall
+  rotate: false
+  xy: 622, 1
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+snakePart
+  rotate: false
+  xy: 723, 600
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+snakeTail
+  rotate: false
+  xy: 797, 470
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+snakeHead
+  rotate: false
+  xy: 853, 602
+  size: 128, 126
+  orig: 128, 128
+  offset: 0, 1
+  index: -1
+back
+  rotate: false
+  xy: 797, 344
+  size: 167, 124
+  orig: 167, 124
+  offset: 0, 0
+  index: -1
+star
+  rotate: false
+  xy: 855, 884
+  size: 128, 123
+  orig: 128, 128
+  offset: 0, 3
+  index: -1
+
+art3.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+sound_off
+  rotate: false
+  xy: 365, 2
+  size: 361, 277
+  orig: 361, 277
+  offset: 0, 0
+  index: -1
+music_off
+  rotate: false
+  xy: 2, 644
+  size: 276, 277
+  orig: 276, 277
+  offset: 0, 0
+  index: -1
+music_on
+  rotate: false
+  xy: 2, 365
+  size: 276, 277
+  orig: 276, 277
+  offset: 0, 0
+  index: -1
+lockedImg
+  rotate: false
+  xy: 538, 281
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+pause
+  rotate: true
+  xy: 728, 2
+  size: 361, 277
+  orig: 361, 277
+  offset: 0, 0
+  index: -1
+sound_on
+  rotate: false
+  xy: 2, 2
+  size: 361, 277
+  orig: 361, 277
+  offset: 0, 0
+  index: -1
+tile
+  rotate: false
+  xy: 280, 281
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1

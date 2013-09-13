@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Json;
 import com.me.snake.PickedUpPos;
 import com.me.snake.ResourseManager;
 import com.me.snake.RootGame;
@@ -59,6 +60,8 @@ public class GameScreen implements Screen, InputProcessor {
 	private float timeAfterShowCompleted;
 	private boolean visible, ifSound, isReadArr;
 	private Stage stage;
+	private ArrayList scoresArr;
+	private int unlockedLvl;
 	
 	public GameScreen(RootGame rootGame) {
 		this.rootGame = rootGame;
@@ -70,9 +73,8 @@ public class GameScreen implements Screen, InputProcessor {
 		SQUARE_HEIGHT = h / pixCountHei;
 		stage=new Stage(0,0,false);
 		
-		System.out.println("W: "+ SQUARE_WIDTH+ " H : "+ SQUARE_HEIGHT);
 		ifAccelerate=false;
-		speed=0.5f;
+		speed=0.515f;
 		accelerate=0.04f;
 		level=rootGame.getLevel();
 		i=0;
@@ -95,6 +97,12 @@ public class GameScreen implements Screen, InputProcessor {
 		wayNew=3;
 		wayOld=3;
 			
+		FileHandle handle = Gdx.files.local("scores.txt");
+		Json json = new Json();
+		String newText = handle.readString(); // read Json from file
+		scoresArr = json.fromJson(ArrayList.class, newText);
+		unlockedLvl= ((Float) scoresArr.get(scoresArr.size()-1)).intValue();
+		
 		camera = new OrthographicCamera(320, 480);
 		
 		bgSp= new Sprite(ResourseManager.getInstance().background);
@@ -108,8 +116,14 @@ public class GameScreen implements Screen, InputProcessor {
 		bgGame.setPosition(0, 0);
 		
 		pause=new Image(ResourseManager.getInstance().atlas.findRegion("pause"));
-		pause.setSize(0.12f*w, 0.17f*h);
-		pause.setPosition(-2, 12.5f*SQUARE_HEIGHT);
+		if(ResourseManager.getInstance().isBig){
+			pause.setRotation(-90);
+			pause.setSize(0.17f*h,0.12f*w);
+			pause.setPosition(-5, 14.9f*SQUARE_HEIGHT);
+		} else{
+			pause.setSize(0.12f*w, 0.17f*h);
+			pause.setPosition(-2, 12.5f*SQUARE_HEIGHT);
+		}
 		pause.setColor(1,1,1,0.8f);
 		pause.addListener(new ClickListener() {
 	    	@Override
@@ -121,8 +135,15 @@ public class GameScreen implements Screen, InputProcessor {
 		});
 		
 		bigPause=new Image(ResourseManager.getInstance().atlas.findRegion("pause"));
-		bigPause.setSize(0.7f*w, 0.7f*h);
-		bigPause.setPosition(0.18f*w, 0.2f*h);
+		if(ResourseManager.getInstance().isBig){
+			bigPause.setOrigin(bigPause.getWidth()/2, bigPause.getHeight()/2);
+			bigPause.setRotation(90);
+			bigPause.setSize(0.7f*h, 0.7f*w);
+			bigPause.setPosition(0.3f*w, 0.1f*h);
+		} else{
+			bigPause.setSize(0.7f*w, 0.7f*h);
+			bigPause.setPosition(0.18f*w, 0.2f*h);
+		}
 		bigPause.setColor(1, 1, 1, 0.5f);
 		bigPause.addListener(new ClickListener() {
 	    	@Override
@@ -254,7 +275,7 @@ public class GameScreen implements Screen, InputProcessor {
 		{
 			visibleApple.setPosition(snakeEat.getX(), snakeEat.getY());
 			appleAlpha=1f;
-			ResourseManager.getInstance().pickUpSound.play(1f);
+			if(ifSound) ResourseManager.getInstance().pickUpSound.play(1f);
 		}
 		boolean goodPos = false;
 		int randX;
@@ -288,7 +309,6 @@ public class GameScreen implements Screen, InputProcessor {
 		if( i>=mobsWay.size()) i=0;
 		mob.setPosition(mobsWay.get(i).get(0) *SQUARE_WIDTH, mobsWay.get(i).get(1)*SQUARE_HEIGHT);
 		if(map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)]==1) {
-			//System.out.println("Mob Hit");
 			 ///Ïנמדנאג
 			dispose();
 			rootGame.gameOver.setScore(score);
@@ -306,7 +326,6 @@ public class GameScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		stage.act(delta);
-		System.out.println(Gdx.graphics.getFramesPerSecond());
 		if(ifPause==false) { //לאיזו ם³קמ םו חאילא÷!
 			step(delta);
 		}
@@ -415,13 +434,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		//ResourseManager.getInstance().stage.clear();
 		stage.dispose();
 	}
 
 	private void step(float delta){
 		if(parts.size()%8==0 & ifAccelerate==true ) {
-			accelerate-=0.003f;
+			accelerate-=0.004f;
 			ifAccelerate=false;
 		}
 		
@@ -472,7 +490,7 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 	
 	private void completedLvlText(float delta){
-		if(score>=RootGame.NEED_POINTS && level!=0) {
+		if(score>=RootGame.NEED_POINTS && level==unlockedLvl) {
 			timeAfterShowCompleted+=delta;
 			if(timeAfterShowCompleted<6.3f) {
 				if(alpha<1 && !visible) ResourseManager.getInstance().fontDone.setColor(1, 1, 1, alpha+=0.005f);
@@ -511,6 +529,7 @@ switch (wayNew) {
 case 1:
 headPart.setMapX(-1);
 headPart.getSp().setX(headPart.getMapX()*SQUARE_WIDTH);
+map[headPart.getMapX()][headPart.getMapY()]=2;
 break;
 case 2:
 headPart.setMapY(1);
@@ -529,8 +548,7 @@ break;
 	
 	@Override
 	public void hide() {
-		System.out.println("Hide!Game");
-		//ResourseManager.getInstance().dispose();
+		
 	}
 	
 	@Override

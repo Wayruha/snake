@@ -102,12 +102,24 @@ public class GameOver implements Screen, InputProcessor {
 		background.setSize(w,h);
 		
 		snOver=new Sprite(ResourseManager.getInstance().atlas.findRegion("snOver"));
-		snOver.setPosition(0, 0.47f*h);
+		if(!ResourseManager.getInstance().isBig){
+			snOver.setOrigin(snOver.getWidth()/2, snOver.getHeight()/2);
+			snOver.setRotation(-90);
+		}
 		snOver.setSize(0.33f*w, 0.53f*h);
+		snOver.setPosition(0, 0.5f*h);
 		
 		recordSp = new Sprite(ResourseManager.getInstance().atlas.findRegion("score"));
-		recordSp.setSize(1f*128*w/480, 0.8f*128*h/320);
-		recordSp.setPosition(0.71f*w, 0.7f*h);
+		if(ResourseManager.getInstance().isBig){
+			recordSp.setSize(0.27f*w,0.3f*h);
+			recordSp.setPosition(0.7f*w, 0.73f*h);
+		}else {
+			recordSp.setOrigin(recordSp.getWidth()/2, recordSp.getHeight()/2);
+			recordSp.setRotation(-90);
+			recordSp.setPosition(0.74f*w, 0.67f*h);
+		}
+		
+	
 		
 		ResourseManager.getInstance().font.setScale(0.6f*w/480,0.6f*h/320);
 		
@@ -120,11 +132,17 @@ public class GameOver implements Screen, InputProcessor {
 		ctrlStart.setPosition(0.73f*w, 0.2f*h);
 		ctrlStart.setName("start");
 		ctrlStart.addListener(buttonClickListener);
-		
-		
+	
 		ctrlBack=new Image(ResourseManager.getInstance().atlas.findRegion("back"));
-		ctrlBack.setSize(0.185f*w, 0.185f*w/1.35f);
-		ctrlBack.setPosition(0.49f*w, 0);
+		ctrlBack.setOrigin(ctrlBack.getWidth()/2, ctrlBack.getHeight()/2);
+		if(!ResourseManager.getInstance().isBig){
+			//ctrlBack.setRotation(-90); 
+			ctrlBack.setPosition(0.495f*w, 0);
+		}else {
+				ctrlBack.setSize(0.185f*w, 0.185f*w/1.35f);
+				ctrlBack.setPosition(0.495f*w, 0);
+			}
+		
 		ctrlBack.setName("back");
 		ctrlBack.addListener(buttonClickListener);
 		

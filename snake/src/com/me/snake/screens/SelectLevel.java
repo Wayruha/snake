@@ -84,12 +84,16 @@ public class SelectLevel implements Screen {
 		
 		ctrlBack=new Image(ResourseManager.getInstance().atlas.findRegion("back"));
 		ctrlBack.setOrigin(ctrlBack.getWidth()/2, ctrlBack.getHeight()/2);
-		//ctrlBack.setRotation(-90);
-		ctrlBack.setSize(0.185f*w, 0.185f*w/1.35f);  //Такі розміра бо воно ж обернуте
-		ctrlBack.setPosition(0.5f*w, 0);
+		if(!ResourseManager.getInstance().isBig){
+			//ctrlBack.setRotation(-90); 
+			ctrlBack.setPosition(0.495f*w, 0);
+		}else {
+				ctrlBack.setSize(0.185f*w, 0.185f*w/1.35f);
+				ctrlBack.setPosition(0.495f*w, 0);
+			}
+		
 		ctrlBack.setName("back");
 		ctrlBack.addListener(buttonClickListener);
-		
 		
 		Gdx.input.setInputProcessor(stage);
 		
@@ -183,8 +187,13 @@ public class SelectLevel implements Screen {
 		// Stack the image and the label at the top of our button
 		Image img=new Image(ResourseManager.getInstance().atlas.findRegion("tile"));
 		Image lockedImg=new Image(ResourseManager.getInstance().atlas.findRegion("lockedImg"));
-		img.setScale(0.85f*w/480, 1f*h/320);
-		lockedImg.setScale(0.83f, 1f);
+		if(ResourseManager.getInstance().isBig) {
+			img.setScale(0.8f*w/540,1.1f*h/360);
+			lockedImg.setScale(0.7f*w/480,0.9f*h/320);
+		} else{
+			img.setScale(1f*w/480, 1.6f*h/320);
+			lockedImg.setScale(1.3f*w/480,1.3f*h/320);
+		}
 		
 		if(unlockedLvl>=level) button.stack(img,label);	else   button.stack(img,label, lockedImg);
 	
@@ -271,13 +280,13 @@ public int getScore(int level) {
 	private int getStar(int level){
 		int score=getScore(level);
 		int stars=0;
-		if(score>=23) {
+		if(score>=rootGame.NEED_POINTS+3) {
 			stars++;
 		}
-		if(score>=26){
+		if(score>=rootGame.NEED_POINTS+6){
 			stars++;
 		}
-		if(score>=29){
+		if(score>=rootGame.NEED_POINTS+9){
 			stars++; 
 		} //Тіпа крутий парсер зірок
 		return stars;
