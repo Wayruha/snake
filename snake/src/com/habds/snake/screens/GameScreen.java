@@ -417,7 +417,6 @@ public class GameScreen implements Screen, InputProcessor {
 			rootGame.setScreen(rootGame.menuScreen);
 		}
 		if(ifPause==true) if(screenX<0.8f*w && screenX>0.3f*w && screenY>0.2f*h && screenY<0.6f*h) ifPause=false;
-		System.out.println("key pressed");
 		return true;
 	}
 	
@@ -564,7 +563,6 @@ map[headPart.getMapX()][headPart.getMapY()]=2;
 	
 	@Override
 	public void pause() {
-		System.out.println("PAUSE!");
 	}
 
 	@Override
