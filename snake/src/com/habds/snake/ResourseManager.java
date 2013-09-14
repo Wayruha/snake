@@ -21,6 +21,7 @@ public class ResourseManager {
 	public Sound buttonSound, pickUpSound;
 	public Music bgMusic;
 	public boolean isBig;
+	public float standartW, standartH;
 
 	public ResourseManager() {
 		load();
@@ -31,6 +32,14 @@ public class ResourseManager {
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		if(w>=540 && h>=360) isBig=true; else isBig=false;
+		if(isBig){
+			standartW=540;
+			standartH=360;
+		} else {
+			standartW=480;
+			standartH=320;
+		}
+		
 		
 		batch = new SpriteBatch();
 

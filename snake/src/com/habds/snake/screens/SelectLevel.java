@@ -97,7 +97,7 @@ public class SelectLevel implements Screen {
 		Gdx.input.setInputProcessor(stage);
 		
 		score = new Label("",labelStyle);
-		score.setFontScale(0.3f);
+		score.setFontScale(0.3f*w/ResourseManager.getInstance().standartW, 0.3f*h/ResourseManager.getInstance().standartH);
 		score.setPosition(0.8f*w, 0.1f*h);
 			
 		container = new Table();
@@ -180,15 +180,15 @@ public class SelectLevel implements Screen {
 		Button button = new Button(buttonStyle);
 		
 		Label label = new Label(String.valueOf(level), labelStyle);
-		label.setFontScale(0.3f);
-		label.setAlignment(Align.center);
+		label.setFontScale(0.3f*w/ResourseManager.getInstance().standartW, 0.3f*h/ResourseManager.getInstance().standartH);
+		label.setAlignment(Align.left);
 		
 		// Stack the image and the label at the top of our button
 		Image img=new Image(ResourseManager.getInstance().atlas.findRegion("tile"));
 		Image lockedImg=new Image(ResourseManager.getInstance().atlas.findRegion("lockedImg"));
 		if(ResourseManager.getInstance().isBig) {
-			img.setScale(0.8f*w/540,1.1f*h/360);
-			lockedImg.setScale(0.7f*w/480,0.9f*h/320);
+			img.setScale(0.8f,1.1f);
+			lockedImg.setScale(0.8f,1.1f);
 		} else{
 			img.setScale(1f*w/480, 1.6f*h/320);
 			lockedImg.setScale(1.3f*w/480,1.3f*h/320);

@@ -186,9 +186,9 @@ public class GameOver implements Screen, InputProcessor {
 		osnova.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,message,0.3f*w, 0.67f*h);
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch, "level "+level, 0.35f*w, 0.95f*h);
-		ResourseManager.getInstance().fontSc.setScale(0.3f*w/480,0.3f*h/320);
+		ResourseManager.getInstance().fontSc.setScale(0.3f*w/ResourseManager.getInstance().standartW,0.3f*h/ResourseManager.getInstance().standartH);
 		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch,""+record, 0.76f*w, 0.95f*h);
-		ResourseManager.getInstance().fontSc.setScale(0.42f*w/480,0.42f*h/320);
+		ResourseManager.getInstance().fontSc.setScale(0.42f*w/ResourseManager.getInstance().standartW,0.42f*h/ResourseManager.getInstance().standartH);
 		ResourseManager.getInstance().fontSc.draw(ResourseManager.getInstance().batch, String.valueOf(score), 0.3f*w, 0.5f*h);
 		ResourseManager.getInstance().batch.end();
 		stage.act(delta);
@@ -230,12 +230,9 @@ public class GameOver implements Screen, InputProcessor {
 				 
 				 if(event.getListenerActor().getName()=="nextLvl") {
 					 if(ifSound) ResourseManager.getInstance().buttonSound.play(1f);
-					 nextLvl.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
-							public void run () {
-								dispose();
+					 			dispose();
 								rootGame.setLevel(level+1);
 			    	    		rootGame.setScreen(rootGame.gameScreen);
-							}}))); 
 			    				
 			    			}
 				 }

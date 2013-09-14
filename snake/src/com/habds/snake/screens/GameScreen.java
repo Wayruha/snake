@@ -173,7 +173,7 @@ public class GameScreen implements Screen, InputProcessor {
 		mob=new Sprite(ResourseManager.getInstance().atlas.createSprite("gud"));
 		mob.setSize(SQUARE_WIDTH, SQUARE_HEIGHT);
 		
-		ResourseManager.getInstance().font.setScale(0.35f);
+		ResourseManager.getInstance().font.setScale(0.35f*w/ResourseManager.getInstance().standartW, 0.35f*h/ResourseManager.getInstance().standartH); 
 		readArr();
 		mobMove();
 		drawWalls();
