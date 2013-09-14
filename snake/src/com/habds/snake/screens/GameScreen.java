@@ -499,13 +499,14 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 	
 	private void moveHead(int wayNew){
-		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
+		//TODO: фтв?!!!
+		/*if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
 			//System.out.println("Head hit");
 		 ///Програв
 			dispose();
 			rootGame.gameOver.setScore(score);
 			rootGame.setScreen(rootGame.gameOver);
-		}
+		}*/
 		headPart.getSp().setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		switch (wayNew) { //Повертаємо голову
 		case 1:
