@@ -178,11 +178,17 @@ public class SelectLevel implements Screen {
 		ButtonStyle buttonStyle=new ButtonStyle();
 		buttonStyle.up=buttonStyle.down=null;
 		Button button = new Button(buttonStyle);
+		Label label = null;
+		if(ResourseManager.getInstance().isBig) 
+			if(w<1700)
+				if(level<10) label = new Label("  "+String.valueOf(level), labelStyle); else  label = new Label(" "+String.valueOf(level), labelStyle);
+			else if(level<10) label = new Label(" "+String.valueOf(level), labelStyle); else  label = new Label(""+String.valueOf(level), labelStyle);
+		else {
+			label = new Label(String.valueOf(level), labelStyle); 
+			label.setAlignment(Align.center);
+		}// більше 1700 - нічо не давати на двойні. на одинарні давати 2
 		
-		Label label = new Label(String.valueOf(level), labelStyle);
 		label.setFontScale(0.3f*w/ResourseManager.getInstance().standartW, 0.3f*h/ResourseManager.getInstance().standartH);
-		label.setAlignment(Align.left);
-		
 		// Stack the image and the label at the top of our button
 		Image img=new Image(ResourseManager.getInstance().atlas.findRegion("tile"));
 		Image lockedImg=new Image(ResourseManager.getInstance().atlas.findRegion("lockedImg"));

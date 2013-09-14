@@ -136,7 +136,7 @@ public class GameScreen implements Screen, InputProcessor {
 			bigPause.setOrigin(bigPause.getWidth()/2, bigPause.getHeight()/2);
 			bigPause.setRotation(90);
 			bigPause.setSize(0.7f*h, 0.7f*w);
-			bigPause.setPosition(0.3f*w, 0.1f*h);
+			bigPause.setPosition(0.57f*w, 0.12f*h);
 		} else{
 			bigPause.setSize(0.7f*w, 0.7f*h);
 			bigPause.setPosition(0.18f*w, 0.2f*h);
@@ -212,7 +212,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlLeft.setName("ctrlLeft");
 		ctrlLeft.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		ctrlLeft.rotate(180);
-		ctrlLeft.setPosition(3*SQUARE_WIDTH, 20);
+		ctrlLeft.setPosition(3*SQUARE_WIDTH, 1*SQUARE_HEIGHT);
 		ctrlLeft.setSize(0.5f*128*w/480, 0.4f*128*h/320);
 		ctrlLeft.setColor(1, 1, 1, 0.8f);
 		ctrlLeft.addListener(ctrlClickListener);
@@ -231,7 +231,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ctrlDown.setRotation(270);
 		ctrlDown.setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		ctrlDown.setSize(0.5f*128*w/480, 0.4f*128*h/320);
-		ctrlDown.setPosition(19*SQUARE_WIDTH-18, 5*SQUARE_HEIGHT);
+		ctrlDown.setPosition(18*SQUARE_WIDTH, 5*SQUARE_HEIGHT);
 		ctrlDown.setColor(1, 1, 1, 0.8f);
 		ctrlDown.addListener(ctrlClickListener);
 		stage.addActor(ctrlDown);
@@ -356,15 +356,9 @@ public class GameScreen implements Screen, InputProcessor {
 						}
 					}
 					
-		turnHead(wayNew);
 		//System.out.println("HD: MapX: "+ headPart.getMapX()+" MapY: "+ headPart.getMapY());
-		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
-			//System.out.println("Head hit");
-		 ///Програв
-			dispose();
-			rootGame.gameOver.setScore(score);
-			rootGame.setScreen(rootGame.gameOver);
-		}
+					
+		moveHead(wayNew);
 	}
 
 	private void drawWalls (){
@@ -505,7 +499,14 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 	}
 	
-	private void turnHead(int wayNew){
+	private void moveHead(int wayNew){
+		if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
+			//System.out.println("Head hit");
+		 ///Програв
+			dispose();
+			rootGame.gameOver.setScore(score);
+			rootGame.setScreen(rootGame.gameOver);
+		}
 		headPart.getSp().setOrigin(SQUARE_WIDTH/2, SQUARE_HEIGHT/2);
 		switch (wayNew) { //Повертаємо голову
 		case 1:
@@ -526,7 +527,6 @@ switch (wayNew) {
 case 1:
 headPart.setMapX(-1);
 headPart.getSp().setX(headPart.getMapX()*SQUARE_WIDTH);
-map[headPart.getMapX()][headPart.getMapY()]=2;
 break;
 case 2:
 headPart.setMapY(1);
@@ -541,6 +541,15 @@ headPart.setMapY(-1);
 headPart.getSp().setY(headPart.getMapY()*SQUARE_HEIGHT);
 break;
 }
+if(map[headPart.getMapX()][headPart.getMapY()]==1 || (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() && Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
+	//System.out.println("Head hit");
+ ///Програв
+	dispose();
+	rootGame.gameOver.setScore(score);
+	rootGame.setScreen(rootGame.gameOver);
+}
+map[headPart.getMapX()][headPart.getMapY()]=2;
+
 	}
 	
 	@Override
