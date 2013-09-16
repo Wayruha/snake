@@ -104,6 +104,7 @@ public class SelectLevel implements Screen {
 		stage.addActor(container);
 		stage.addActor(ctrlStart);
 		stage.addActor(ctrlBack);
+		//TODO
 		stage.addActor(score);
 		stage.addListener(new ClickListener(){
 		    	@Override
@@ -248,6 +249,8 @@ public class SelectLevel implements Screen {
 			if(event.getListenerActor().getName()=="start") { 
 				if(checkedLvl<=unlockedLvl && checkedLvl>-1) {
 					if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
+					stage.addAction(Actions.color(new Color(1, 1, 1, 1))); //задали макс прозорість
+					stage.addAction(Actions.color(new Color(1, 1, 1, 0), 0.5f)); //запустили екшн
 		    				ctrlStart.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 		    					public void run () {
 		    						rootGame.setLevel(checkedLvl);
@@ -260,6 +263,8 @@ public class SelectLevel implements Screen {
 		    	    		
 		} else if(event.getListenerActor().getName()=="back"){ 
 			if(ifSound)	ResourseManager.getInstance().buttonSound.play(1f);
+			stage.addAction(Actions.color(new Color(1, 1, 1, 1))); //задали макс прозорість
+			stage.addAction(Actions.color(new Color(1, 1, 1, 0), 0.5f)); //запустили екшн
 			ctrlBack.addAction(Actions.sequence(Actions.color(new Color(toRGB(37,89,115)),0.4f),Actions.run(new Runnable(){
 				public void run () {
 					dispose();

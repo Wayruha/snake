@@ -234,7 +234,7 @@ public class GameOver implements Screen, InputProcessor {
 								rootGame.setLevel(level+1);
 			    	    		rootGame.setScreen(rootGame.gameScreen);
 			    				
-			    			}
+				 	}
 				 }
 	};
 

@@ -50,9 +50,7 @@ public class MenuScreen implements Screen {
 		ifMusic=rootGame.ifMusic();
 		camera = new OrthographicCamera(320, 480);
 		stage=new Stage(0,0,false);
-		stage.addAction(Actions.color(new Color(1, 1, 1, 0))); //задали макс прозорість
-		stage.addAction(Actions.color(new Color(1, 1, 1, 1), 0.5f)); //запустили екшн
-		
+	
 		if(ifMusic)
 			if(!ResourseManager.getInstance().bgMusic.isPlaying()) {
 				ResourseManager.getInstance().bgMusic.play();
