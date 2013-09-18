@@ -70,7 +70,7 @@ public class GameScreen implements Screen, InputProcessor {
 		stage = new Stage(0, 0, false);
 
 		ifAccelerate = false;
-		speed = 0.515f;
+		speed = 0.53f;
 		accelerate = 0.04f;
 		level = rootGame.getLevel();
 		i = 0;
@@ -130,16 +130,15 @@ public class GameScreen implements Screen, InputProcessor {
 				bigPause.setVisible(true);
 			}
 		});
-
 		bigPause = new Image(ResourseManager.getInstance().atlas.findRegion("pause"));
 		if (ResourseManager.getInstance().isBig) {
 			bigPause.setOrigin(bigPause.getWidth() / 2,bigPause.getHeight() / 2);
 			bigPause.setRotation(90);
-			bigPause.setSize(0.7f * h, 0.7f * w);
-			bigPause.setPosition(0.57f * w, 0.12f * h);
+			bigPause.setSize( 1f*277*h/360, 1.3f*361*w/540);
+			bigPause.setPosition(0.32f*w, 0.05f * h);
 		} else {
 			bigPause.setSize(0.7f * w, 0.7f * h);
-			bigPause.setPosition(0.18f * w, 0.2f * h);
+			bigPause.setPosition(0.15f * w, 0.2f * h);
 		}
 		bigPause.setColor(1, 1, 1, 0.5f);
 		bigPause.addListener(new ClickListener() {
@@ -312,7 +311,7 @@ public class GameScreen implements Screen, InputProcessor {
 			mob.setPosition(mobsWay.get(i).get(0) * SQUARE_WIDTH, mobsWay.get(i).get(1) * SQUARE_HEIGHT);
 			if (map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)] == 1) {
 				// /Програв
-				dispose();
+				//dispose();
 				rootGame.gameOver.setScore(score);
 				rootGame.setScreen(rootGame.gameOver);
 			}
@@ -401,7 +400,7 @@ public class GameScreen implements Screen, InputProcessor {
 		public boolean touchDown(InputEvent event, float x, float y,
 				int pointer, int button) {
 			event.getListenerActor().addAction(
-					Actions.color(new Color(toRGB(37, 89, 115, 0.7f))));
+					Actions.color(new Color(toRGB(37, 89, 115, 0.6f))));
 			if (event.getListenerActor().getName() == "ctrlUp")
 				wayNew = 2;
 			if (event.getListenerActor().getName() == "ctrlLeft")
@@ -423,7 +422,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// system.out.println("x: " + screenX/SQUARE_WIDTH +
+		/*// system.out.println("x: " + screenX/SQUARE_WIDTH +
 		// ";  Y: "+screenY/SQUARE_HEIGHT);
 		if (screenX <= 2 * SQUARE_WIDTH && screenY > 4 * SQUARE_HEIGHT
 				&& screenY <= 8 * SQUARE_HEIGHT)
@@ -448,16 +447,19 @@ public class GameScreen implements Screen, InputProcessor {
 			if (screenX < 0.8f * w && screenX > 0.3f * w && screenY > 0.2f * h
 					&& screenY < 0.6f * h)
 				ifPause = false;
-		return true;
+		return true;*/
+		return false;
 	}
+	
 
 	@Override
 	public void dispose() {
+		System.out.println("Dispose!");
 		stage.dispose();
 	}
 
 	private void step(float delta) {
-		if (parts.size() % 8 == 0 & ifAccelerate == true) {
+		if (parts.size() % 6 == 0 & ifAccelerate == true) {
 			accelerate -= 0.004f;
 			ifAccelerate = false;
 		}
@@ -540,15 +542,6 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void moveHead(int wayNew) {
-		// TODO: фтв?!!!
-		/*
-		 * if(map[headPart.getMapX()][headPart.getMapY()]==1 ||
-		 * (Math.round(mob.getX()/SQUARE_WIDTH)==headPart.getMapX() &&
-		 * Math.round(mob.getY()/SQUARE_HEIGHT)==headPart.getMapY())) {
-		 * //System.out.println("Head hit"); ///Програв dispose();
-		 * rootGame.gameOver.setScore(score);
-		 * rootGame.setScreen(rootGame.gameOver); }
-		 */
 		headPart.getSp().setOrigin(SQUARE_WIDTH / 2, SQUARE_HEIGHT / 2);
 		switch (wayNew) { // Повертаємо голову
 		case 1:
