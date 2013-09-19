@@ -71,7 +71,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		ifAccelerate = false;
 		speed = 0.53f;
-		accelerate = 0.045f;
+		accelerate = 0.047f;
 		level = rootGame.getLevel();
 		i = 0;
 		score = 0;
@@ -462,7 +462,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void step(float delta) {
 		if (parts.size() % 6 == 0 & ifAccelerate == true) {
-			accelerate -= 0.003f;
+			accelerate -= 0.002f;
 			ifAccelerate = false;
 		}
 
