@@ -71,7 +71,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		ifAccelerate = false;
 		speed = 0.53f;
-		accelerate = 0.04f;
+		accelerate = 0.045f;
 		level = rootGame.getLevel();
 		i = 0;
 		score = 0;
@@ -185,7 +185,8 @@ public class GameScreen implements Screen, InputProcessor {
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
 				if (keycode == Keys.BACK) {
-					ResourseManager.getInstance().dispose();
+					dispose();
+					rootGame.setScreen(rootGame.menuScreen);
 				}
 				return true;
 			}
@@ -338,7 +339,8 @@ public class GameScreen implements Screen, InputProcessor {
 		completedLvlText(delta);
 		snakeEat.draw(ResourseManager.getInstance().batch);
 		ateApple();
-		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"score "+score,9 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
+		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"score "+score,6 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
+		if(unlockedLvl==level) 	ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"need "+String.valueOf(17-score),12 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
 		if (isReadArr)
 			mob.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
@@ -460,7 +462,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void step(float delta) {
 		if (parts.size() % 6 == 0 & ifAccelerate == true) {
-			accelerate -= 0.004f;
+			accelerate -= 0.003f;
 			ifAccelerate = false;
 		}
 

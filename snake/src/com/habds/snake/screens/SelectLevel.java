@@ -110,7 +110,8 @@ public class SelectLevel implements Screen {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			ResourseManager.getInstance().dispose();
+		    			dispose();
+						rootGame.setScreen(rootGame.menuScreen);
 		    		}
 		    		return true;
 		    	}

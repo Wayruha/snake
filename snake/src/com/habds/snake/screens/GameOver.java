@@ -63,7 +63,8 @@ public class GameOver implements Screen, InputProcessor {
 				}
 			} else {
 				scoresArr.set(level,score); 
-				scoresArr.set(scoresArr.size()-1, unlockedLvl+1);
+				unlockedLvl++;
+				scoresArr.set(scoresArr.size()-1, unlockedLvl);
 				message="Nice!Level completed";
 			}
 		} else {
@@ -152,7 +153,7 @@ public class GameOver implements Screen, InputProcessor {
 		nextLvl.addListener(buttonClickListener);
 		
 		setRecord();
-		if(message=="Nice!Level completed") nextLvl.setVisible(true); else  nextLvl.setVisible(false);
+		if(unlockedLvl>level) nextLvl.setVisible(true); else  nextLvl.setVisible(false);
 		
 		stage.addActor(nextLvl);
 		stage.addActor(ctrlStart);
@@ -161,7 +162,8 @@ public class GameOver implements Screen, InputProcessor {
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {
 		    		if (keycode == Keys.BACK) {
-		    			ResourseManager.getInstance().dispose();
+		    			dispose();
+						rootGame.setScreen(rootGame.menuScreen);
 		    		}
 		    		return true;
 		    	}
