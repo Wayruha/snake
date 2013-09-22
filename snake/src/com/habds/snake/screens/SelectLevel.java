@@ -95,6 +95,7 @@ public class SelectLevel implements Screen {
 		ctrlBack.addListener(buttonClickListener);
 		
 		Gdx.input.setInputProcessor(stage);
+		Gdx.input.setCatchBackKey(true); 
 		
 		score = new Label("",labelStyle);
 		score.setFontScale(0.3f*w/ResourseManager.getInstance().standartW, 0.3f*h/ResourseManager.getInstance().standartH);
@@ -106,6 +107,7 @@ public class SelectLevel implements Screen {
 		stage.addActor(ctrlBack);
 		//TODO
 		stage.addActor(score);
+		
 		stage.addListener(new ClickListener(){
 		    	@Override
 		    	public boolean keyDown(InputEvent event, int keycode) {

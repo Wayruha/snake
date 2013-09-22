@@ -181,6 +181,7 @@ public class GameScreen implements Screen, InputProcessor {
 		stage.addActor(pause);
 		stage.addActor(bigPause);
 		stage.addActor(exit);
+		Gdx.input.setCatchBackKey(true); 
 		stage.addListener(new ClickListener() {
 			@Override
 			public boolean keyDown(InputEvent event, int keycode) {
@@ -340,9 +341,9 @@ public class GameScreen implements Screen, InputProcessor {
 		snakeEat.draw(ResourseManager.getInstance().batch);
 		ateApple();
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"score "+score,6 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
-		if(unlockedLvl==level) 	ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"need "+String.valueOf(17-score),12 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
-		if (isReadArr)
-			mob.draw(ResourseManager.getInstance().batch);
+		if(unlockedLvl==level && RootGame.NEED_POINTS-score>0) 	ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"need "+String.valueOf(RootGame.NEED_POINTS-score),12 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
+	//	else ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"completed",12 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
+		if (isReadArr) mob.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
 
 		stage.draw();

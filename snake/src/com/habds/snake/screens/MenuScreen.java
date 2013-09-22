@@ -87,7 +87,7 @@ public class MenuScreen implements Screen {
 		if(!ResourseManager.getInstance().isBig){
 			snMenuSp.setRotation(-90);
 			snMenuSp.setPosition(0, 0.3f*h);
-			//snMenuSp.setScale(1.2f*w/480, 1.2f*h/320);
+		
 		} else{
 		snMenuSp.setSize(0.3f*512*w/480, 0.4f*512*h/320);  // перевернуте!
 		snMenuSp.setPosition(0.05f*w, 0.25f*h);
@@ -113,7 +113,6 @@ public class MenuScreen implements Screen {
 		musicOn.addListener(musicListener);
 		musicOff=new Image(ResourseManager.getInstance().atlas.findRegion("music_off"));
 		musicOff.setOrigin(musicOff.getWidth()/2, musicOff.getHeight()/2);
-		//musicOff.rotate(-90);
 		musicOff.setSize(0.22f*256*w/480, 0.21f*256*h/320);
 		musicOff.setPosition(0.4f*w, 0.8f*h);
 		musicOff.setName("music_off");
@@ -214,7 +213,6 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		//ResourseManager.getInstance().stage.clear();
 		stage.dispose();
 	}
 	

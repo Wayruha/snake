@@ -121,7 +121,7 @@ public class GameOver implements Screen, InputProcessor {
 		
 	
 		
-		ResourseManager.getInstance().font.setScale(0.6f*w/480,0.6f*h/320);
+		ResourseManager.getInstance().font.setScale(0.6f*w/ResourseManager.getInstance().standartW,0.6f*h/ResourseManager.getInstance().standartH);
 		
 		osnova=new Sprite(ResourseManager.getInstance().atlas.createSprite("osnova"));
 		osnova.setSize(0.5f*w, 0.5f*w/1.61f);
@@ -154,6 +154,9 @@ public class GameOver implements Screen, InputProcessor {
 		
 		setRecord();
 		if(unlockedLvl>level) nextLvl.setVisible(true); else  nextLvl.setVisible(false);
+		
+		message="Nice!Level completed!";
+		Gdx.input.setCatchBackKey(true); 
 		
 		stage.addActor(nextLvl);
 		stage.addActor(ctrlStart);
