@@ -44,7 +44,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private ArrayList<Sprite> wallsSp;
 	ArrayList<ArrayList<Byte>> mobsWay;
 	private char[] charArray;
-	private float speed, accelerate, mobSpeed = 0.5f;
+	private float speed, accelerate, mobSpeed;
 	private RootGame rootGame;
 	float w = Gdx.graphics.getWidth();
 	float h = Gdx.graphics.getHeight();
@@ -70,8 +70,9 @@ public class GameScreen implements Screen, InputProcessor {
 		stage = new Stage(0, 0, false);
 
 		ifAccelerate = false;
-		speed = 0.53f;
-		accelerate = 0.05f;
+		speed = 0.47f;
+		mobSpeed=speed;
+		accelerate = 0.052f;
 		level = rootGame.getLevel();
 		i = 0;
 		score = 0;
@@ -93,6 +94,8 @@ public class GameScreen implements Screen, InputProcessor {
 		wayNew = 3;
 		wayOld = 3;
 
+	
+		
 		FileHandle handle = Gdx.files.local("scores.txt");
 		Json json = new Json();
 		String newText = handle.readString(); // read Json from file
@@ -307,11 +310,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void mobMove() {
 		if (isReadArr) {
-
 			if (i >= mobsWay.size())
 				i = 0;
 			mob.setPosition(mobsWay.get(i).get(0) * SQUARE_WIDTH, mobsWay.get(i).get(1) * SQUARE_HEIGHT);
-			if (map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)] == 1) {
+			if (map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)] != 0) {  //Магія!!!!
 				// /Програв
 				//dispose();
 				rootGame.gameOver.setScore(score);
@@ -342,7 +344,6 @@ public class GameScreen implements Screen, InputProcessor {
 		ateApple();
 		ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"score "+score,6 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
 		if(unlockedLvl==level && RootGame.NEED_POINTS-score>0) 	ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"need "+String.valueOf(RootGame.NEED_POINTS-score),12 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
-	//	else ResourseManager.getInstance().font.draw(ResourseManager.getInstance().batch,"completed",12 * SQUARE_WIDTH, 14 * SQUARE_HEIGHT);
 		if (isReadArr) mob.draw(ResourseManager.getInstance().batch);
 		ResourseManager.getInstance().batch.end();
 

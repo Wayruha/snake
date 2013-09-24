@@ -155,7 +155,6 @@ public class GameOver implements Screen, InputProcessor {
 		setRecord();
 		if(unlockedLvl>level) nextLvl.setVisible(true); else  nextLvl.setVisible(false);
 		
-		message="Nice!Level completed!";
 		Gdx.input.setCatchBackKey(true); 
 		
 		stage.addActor(nextLvl);
