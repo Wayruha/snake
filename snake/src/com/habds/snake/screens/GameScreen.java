@@ -458,7 +458,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		System.out.println("Dispose!");
+		//System.out.println("Dispose!");
 		stage.dispose();
 	}
 
