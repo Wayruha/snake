@@ -72,7 +72,7 @@ public class GameScreen implements Screen, InputProcessor {
 		ifAccelerate = false;
 		speed = 0.47f;
 		mobSpeed=speed;
-		accelerate = 0.052f;
+		accelerate = 0.054f;
 		level = rootGame.getLevel();
 		i = 0;
 		score = 0;

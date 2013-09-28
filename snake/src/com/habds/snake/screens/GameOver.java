@@ -153,7 +153,7 @@ public class GameOver implements Screen, InputProcessor {
 		nextLvl.addListener(buttonClickListener);
 		
 		setRecord();
-		if(unlockedLvl>level) nextLvl.setVisible(true); else  nextLvl.setVisible(false);
+		if(unlockedLvl>level && level>0) nextLvl.setVisible(true); else  nextLvl.setVisible(false);
 		
 		Gdx.input.setCatchBackKey(true); 
 		
