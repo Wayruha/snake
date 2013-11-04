@@ -313,13 +313,18 @@ public class GameScreen implements Screen, InputProcessor {
 			if (i >= mobsWay.size())
 				i = 0;
 			mob.setPosition(mobsWay.get(i).get(0) * SQUARE_WIDTH, mobsWay.get(i).get(1) * SQUARE_HEIGHT);
-			if (map[mobsWay.get(i).get(0)][mobsWay.get(i).get(1)] != 0) {  //Магія!!!!
-				// /Програв
-				//dispose();
+			if( (int) ((int)mob.getX()/SQUARE_WIDTH) ==  headPart.getMapX() && (int) ((int)mob.getY()/SQUARE_HEIGHT)+1== headPart.getMapY()) {
+				System.out.println("Вдарилось");
 				rootGame.gameOver.setScore(score);
 				rootGame.setScreen(rootGame.gameOver);
 			}
+			
 			i++;
+			int a = (int)((int) 213.435f/23.54f);
+			System.out.println("mob:");
+			System.out.println("   x: "+(int) ((int)mob.getX()/SQUARE_WIDTH) + "  Y: "+ (int) ((int)mob.getY()/SQUARE_HEIGHT) );
+			System.out.println("head: ");
+			System.out.println("   X: "+ headPart.getMapX()+ "  Y: "+ headPart.getMapY());
 			// System.out.println("x: "+ mob.getX()+ " y : "+ mob.getY());
 
 		}
@@ -357,6 +362,8 @@ public class GameScreen implements Screen, InputProcessor {
 			wayOld = wayNew;
 		// Міняти координати екземплярів на попередні ( вище по списку)
 		// (переміщення)
+		
+		
 		if (parts.size() > 1) {
 			map[parts.get(parts.size() - 1).getMapX()][parts.get(
 					parts.size() - 1).getMapY()] = 0;
@@ -372,6 +379,7 @@ public class GameScreen implements Screen, InputProcessor {
 		// headPart.getMapY());
 
 		moveHead(wayNew);
+		
 	}
 
 	private void drawWalls() {
@@ -426,32 +434,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		/*// system.out.println("x: " + screenX/SQUARE_WIDTH +
-		// ";  Y: "+screenY/SQUARE_HEIGHT);
-		if (screenX <= 2 * SQUARE_WIDTH && screenY > 4 * SQUARE_HEIGHT
-				&& screenY <= 8 * SQUARE_HEIGHT)
-			this.wayNew = 2;
-		if (screenX >= 3 * SQUARE_WIDTH && screenX <= 6 * SQUARE_WIDTH
-				&& screenY >= h - 4 * SQUARE_HEIGHT)
-			this.wayNew = 1;
-		if (screenX >= 13 * SQUARE_WIDTH && screenX <= 17 * SQUARE_WIDTH
-				&& screenY >= 12 * SQUARE_HEIGHT)
-			this.wayNew = 3;
-		if (screenX >= 18 * SQUARE_WIDTH && screenY >= 4 * SQUARE_HEIGHT
-				&& screenY <= 8 * SQUARE_HEIGHT)
-			this.wayNew = 4;
-		if (screenX <= 2 * SQUARE_WIDTH && screenY <= 0.2f * h)
-			ifPause = true; // Пауза
-		if (screenX >= 17 * SQUARE_WIDTH && screenY <= 2 * SQUARE_HEIGHT) {
-			// вертаємось в меню.
-			dispose();
-			rootGame.setScreen(rootGame.menuScreen);
-		}
-		if (ifPause == true)
-			if (screenX < 0.8f * w && screenX > 0.3f * w && screenY > 0.2f * h
-					&& screenY < 0.6f * h)
-				ifPause = false;
-		return true;*/
+		
 		return false;
 	}
 	
@@ -481,10 +464,12 @@ public class GameScreen implements Screen, InputProcessor {
 					&& parts.get(0).getMapY() == eatArrY) {
 				pickUp(); // з`їли
 			}
+			
 			if (mobsTime > mobSpeed) {
 				mobMove();
 				mobsTime = 0;
 			}
+			
 
 			// Розмноження
 			for (Iterator<PickedUpPos> it = pickedUp.iterator(); it.hasNext();) {
@@ -581,16 +566,15 @@ public class GameScreen implements Screen, InputProcessor {
 			break;
 		}
 		if (map[headPart.getMapX()][headPart.getMapY()] == 1
-				|| (Math.round(mob.getX() / SQUARE_WIDTH) == headPart.getMapX() && Math
-						.round(mob.getY() / SQUARE_HEIGHT) == headPart
-						.getMapY())) {
+				||(int) ((int)mob.getX()/SQUARE_WIDTH) ==  headPart.getMapX() && (int) ((int)mob.getY()/SQUARE_HEIGHT)+1== headPart.getMapY()) {
 			// System.out.println("Head hit");
 			// /Програв
 			dispose();
 			rootGame.gameOver.setScore(score);
 			rootGame.setScreen(rootGame.gameOver);
 		}
-		map[headPart.getMapX()][headPart.getMapY()] = 2;
+		
+		//map[headPart.getMapX()][headPart.getMapY()] = 2;
 
 	}
 
