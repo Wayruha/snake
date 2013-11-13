@@ -124,7 +124,7 @@ public class SelectLevel implements Screen {
 		scroll.setFlingTime(0.1f);
 		scroll.setPageSpacing(25);
 		int c = 1;
-		for (int l = 0; l < 2; l++) {
+		for (int l = 0; l < 3; l++) {
 			Table levels = new Table();
 			levels.defaults().padTop(10).height(0.2f*h);
 		    levels.row();

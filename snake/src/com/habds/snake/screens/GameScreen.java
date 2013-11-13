@@ -314,17 +314,13 @@ public class GameScreen implements Screen, InputProcessor {
 				i = 0;
 			mob.setPosition(mobsWay.get(i).get(0) * SQUARE_WIDTH, mobsWay.get(i).get(1) * SQUARE_HEIGHT);
 			if( (int) ((int)mob.getX()/SQUARE_WIDTH) ==  headPart.getMapX() && (int) ((int)mob.getY()/SQUARE_HEIGHT)+1== headPart.getMapY()) {
-				System.out.println("Вдарилось");
+				
 				rootGame.gameOver.setScore(score);
 				rootGame.setScreen(rootGame.gameOver);
 			}
 			
 			i++;
 			int a = (int)((int) 213.435f/23.54f);
-			System.out.println("mob:");
-			System.out.println("   x: "+(int) ((int)mob.getX()/SQUARE_WIDTH) + "  Y: "+ (int) ((int)mob.getY()/SQUARE_HEIGHT) );
-			System.out.println("head: ");
-			System.out.println("   X: "+ headPart.getMapX()+ "  Y: "+ headPart.getMapY());
 			// System.out.println("x: "+ mob.getX()+ " y : "+ mob.getY());
 
 		}

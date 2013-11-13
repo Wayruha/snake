@@ -65,7 +65,7 @@ public class MenuScreen implements Screen {
 	    if (!handle.exists()) {
 			   try {
 			    handle.file().createNewFile();
-			    String jsonText="[0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1]"; //змінити коли зміниться к-сть лвлів
+			    String jsonText="[0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0,0,0,0,0,1]"; //змінити коли зміниться к-сть лвлів
 			    handle.writeString(jsonText, true);
 			   } catch (IOException e) {
 			    e.printStackTrace();
