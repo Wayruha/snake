@@ -33,7 +33,7 @@ public class GameOver implements Screen, InputProcessor {
 	private String message;
 	BufferedWriter out = null;
 	private int level, unlockedLvl;
-	private ArrayList scoresArr;
+	private ArrayList<Float> scoresArr;
 	private boolean ifSound;
 	private Stage stage;
 	
@@ -50,27 +50,27 @@ public class GameOver implements Screen, InputProcessor {
 		Json json = new Json();
 		String newText = handle.readString(); // read Json from file
 		scoresArr = json.fromJson(ArrayList.class, newText);
-		record = ((Float) scoresArr.get(level)).intValue();
-		unlockedLvl= ((Float) scoresArr.get(scoresArr.size()-1)).intValue();
+		record = ((Float)scoresArr.get(level)).intValue();
+		unlockedLvl= ((Float)scoresArr.get(scoresArr.size()-1)).intValue();
 		 
 		if(unlockedLvl==level){     
 			if(score<RootGame.NEED_POINTS){
 				message="Level failed";
 				if(score>record){
 					message="Nice!New record!";
-					scoresArr.set(level,score);
+					scoresArr.set(level,(float) score);
 					record=score;
 				}
 			} else {
-				scoresArr.set(level,score); 
+				scoresArr.set(level,(float) score); 
 				unlockedLvl++;
-				scoresArr.set(scoresArr.size()-1, unlockedLvl);
+				scoresArr.set(scoresArr.size()-1, (float) unlockedLvl);
 				message="Nice!Level completed";
 			}
 		} else {
 			if(score>record){
 				message="Nice!New record!";
-				scoresArr.set(level,score);
+				scoresArr.set(level,(float) score);
 				record=score;
 			} else {
 				message="Your score: ";
