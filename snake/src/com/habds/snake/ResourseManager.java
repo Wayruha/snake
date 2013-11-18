@@ -14,7 +14,7 @@ public class ResourseManager {
 	private static ResourseManager instance;
 
 	public Texture background, fontScTx, fontTx, snGame ;
-	//private Texture tileTx,lockedTx;
+//	public Texture tileTx,lockedTx;
 	public BitmapFont fontSc, font, fontDone;
 	public TextureAtlas atlas;
 	public SpriteBatch batch;

@@ -46,7 +46,7 @@ public class RootGame extends Game {
 		gameOver = new GameOver(this);
 		selectLevel = new SelectLevel(this);
 		gameScreen=new GameScreen(this);
-		setScreen(menuScreen);
+		setScreen(selectLevel);
 	}
 
 }

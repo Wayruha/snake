@@ -122,21 +122,21 @@ public class SelectLevel implements Screen {
 		container.setFillParent(true);
 		PagedScrollPane scroll = new PagedScrollPane();
 		scroll.setFlingTime(0.1f);
-		scroll.setPageSpacing(25);
+		//scroll.setPageSpacing(30f);
 		int c = 1;
 		for (int l = 0; l < 3; l++) {
 			Table levels = new Table();
-			levels.defaults().padTop(10).height(0.2f*h);
+			levels.defaults().padTop(10).height(0.2f*h).width(0.24f*w);
 		    levels.row();
-		     levels.add(getLevelButton(c++)).expand().fill();
+		     levels.add(getLevelButton(c++)).expand().fill().padLeft(10f);
 		     levels.add(getLevelButton(c++)).expand().fill();
 		     levels.add(getLevelButton(c++)).expand().fill();
 		     levels.add(getLevelButton(c++)).expand().fill();
 			levels.row();
-			 levels.add(getLevelButton(c++)).expand().fill();
+			 levels.add(getLevelButton(c++)).expand().fill().padLeft(10f);
 			 levels.add(getLevelButton(c++)).expand().fill();
 			levels.row();
-			 levels.add(getLevelButton(c++)).expand().fill();
+			 levels.add(getLevelButton(c++)).expand().fill().padLeft(10f);
 			scroll.addPage(levels);
 		}
 
@@ -196,9 +196,11 @@ public class SelectLevel implements Screen {
 		// Stack the image and the label at the top of our button
 		Image img=new Image(ResourseManager.getInstance().atlas.findRegion("tile"));
 		Image lockedImg=new Image(ResourseManager.getInstance().atlas.findRegion("lockedImg"));
+		//Image img=new Image(ResourseManager.getInstance().tileTx);
+		//Image lockedImg=new Image(ResourseManager.getInstance().lockedTx);
 		if(ResourseManager.getInstance().isBig) {
-			img.setScale(0.8f,1.1f);
-			lockedImg.setScale(0.8f,1.1f);
+			img.setScale(0.75f,1.1f);
+			lockedImg.setScale(0.75f,1.1f);
 		} else{
 			img.setScale(1f*w/480, 1.6f*h/320);
 			lockedImg.setScale(1.3f*w/480,1.3f*h/320);
@@ -209,6 +211,7 @@ public class SelectLevel implements Screen {
 		// Randomize the number of stars earned for demonstration purposes
 		////////////////////////////////////
 		int stars =getStar(level);
+		stars=0;//TODO
 		Table starTable = new Table();
 		starTable.defaults().pad(5);
 		if (stars > 0) {
