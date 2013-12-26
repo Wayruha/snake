@@ -203,7 +203,12 @@ public class GameOver implements Screen, InputProcessor {
 	@Override
 	public void dispose() {
 		//ResourseManager.getInstance().stage.clear();
-		stage.dispose();
+		try {
+			stage.clear();
+			stage.dispose();
+		} catch (IllegalStateException e) {
+			// TODO: handle exception
+		}
 	}
 	
 	
