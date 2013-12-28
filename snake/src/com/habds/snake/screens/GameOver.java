@@ -202,7 +202,6 @@ public class GameOver implements Screen, InputProcessor {
 	
 	@Override
 	public void dispose() {
-		//ResourseManager.getInstance().stage.clear();
 		try {
 			stage.clear();
 			stage.dispose();

@@ -213,7 +213,11 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		stage.dispose();
+		try {
+			stage.dispose();
+		} catch (IllegalStateException e) {
+			// TODO: handle exception
+		}
 	}
 	
 	private ClickListener musicListener=new ClickListener(){

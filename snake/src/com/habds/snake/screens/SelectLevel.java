@@ -163,8 +163,11 @@ public class SelectLevel implements Screen {
 	}
 
 	public void dispose () {
-		//ResourseManager.getInstance().stage.clear();
-		stage.dispose();
+		try {
+			stage.dispose();
+		} catch (IllegalStateException e) {
+			// TODO: handle exception
+		}
 	}
 
 	public boolean needsGL20 () {

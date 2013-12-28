@@ -160,8 +160,6 @@ public class GameScreen implements Screen, InputProcessor {
 		exit.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (ifSound)
-					ResourseManager.getInstance().buttonSound.play(1f);
 				dispose();
 				rootGame.setScreen(rootGame.menuScreen);
 			}
@@ -437,8 +435,11 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		//System.out.println("Dispose!");
-		stage.dispose();
+		try {
+			stage.dispose();
+		} catch (IllegalStateException e) {
+			// TODO: handle exception
+		}
 	}
 
 	private void step(float delta) {
