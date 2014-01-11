@@ -44,6 +44,7 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void show() {
+		RootGame.getInstance().getRequestHandler().showAds(false);
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		ifSound=rootGame.ifSound();

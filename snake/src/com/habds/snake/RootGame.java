@@ -14,6 +14,20 @@ public class RootGame extends Game {
 	public static final int NEED_POINTS = 17;
 	private int level;
 	private boolean ifSound=true,ifMusic=true;
+	public  IActivityRequestHandler requestHandler;
+	private static RootGame instance;
+	
+	public static RootGame getInstance() {
+		return instance;
+	}
+	
+	public IActivityRequestHandler getRequestHandler() {
+		return requestHandler;
+	}
+	
+	public RootGame(IActivityRequestHandler handler) {
+		requestHandler = handler;
+	}
 
 	public boolean ifMusic() {
 		return ifMusic;
@@ -41,6 +55,7 @@ public class RootGame extends Game {
 
 	@Override
 	public void create() {
+		instance = this;
 		new ResourseManager();  
 		menuScreen = new MenuScreen(this);
 		gameOver = new GameOver(this);
